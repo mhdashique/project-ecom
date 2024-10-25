@@ -1,0 +1,80 @@
+{% extends "user_base.html" %}
+{% block content %}
+{% load static %}
+
+<div class="breadcrumb-area section-padding-1 bg-gray d-flex align-items-end py-4 " style="height: 15rem;">
+    <div class="container-fluid">
+        <div class="breadcrumb-content text-center">
+            <div class="breadcrumb-title">
+                <h2>Edit Address</h2>
+            </div>
+            <ul>
+                <li>
+                    <a href="{% url 'home' %}">Home</a>
+                </li>
+                <li><span> &gt; </span></li>
+                <li class="active">Edit Address</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="myaccount-content">
+        <div class="account-details-form">
+            <form method="POST" action="">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="single-input-item">
+                            <label for="full-name" class="required">Full Name <span>*</span></label>
+                            <input type="text" id="full-name" name="full_name" value="{{ address.name }}" />
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="single-input-item">
+                            <label for="phone-number" class="required">Phone Number <span>*</span></label>
+                            <input type="text" id="phone-number" name="phone_number" value="{{ address.phone }}" />
+                        </div>
+                    </div>
+                </div>
+                <div class="single-input-item">
+                    <label for="street-address" class="required">Street Address <span>*</span></label>
+                    <input type="text" id="street-address" name="street_address" value="{{ address.street_address }}" />
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="single-input-item">
+                            <label for="city" class="required">City <span>*</span></label>
+                            <input type="text" id="city" name="city" value="{{ address.city }}" />
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="single-input-item">
+                            <label for="state" class="required">State/Province <span>*</span></label>
+                            <input type="text" id="state" name="state" value="{{ address.state }}" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="single-input-item">
+                            <label for="postal-code" class="required">Pin Code <span>*</span></label>
+                            <input type="text" id="postal-code" name="pin_code" placeholder="6 digit pin-code" value="{{ address.pincode }}" />
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="single-input-item">
+                            <label for="country" class="required">Country <span>*</span></label>
+                            <input type="text" id="country" name="country" value="{{ address.country }}" />
+                        </div>
+                    </div>
+                </div>
+                <div class="single-input-item">
+                    <button type="submit" class="check-btn sqr-btn">Update Address</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

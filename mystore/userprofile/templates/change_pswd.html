@@ -1,0 +1,52 @@
+{% extends "user_base.html" %}
+{% block content %}
+{% load static %}
+
+<div class="breadcrumb-area section-padding-1 bg-gray d-flex align-items-end py-4" style="height: 15rem;">
+    <div class="container-fluid">
+        <div class="breadcrumb-content text-center">
+            <div class="breadcrumb-title">
+                <h2>Change Password</h2>
+            </div>
+            <ul>
+                <li>
+                    <a href="{% url 'home' %}">Home</a>
+                </li>
+                <li><span> &gt; </span></li>
+                <li class="active">Change Password</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="myaccount-content">
+        <div class="account-details-form">
+            <form method="POST" action="">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="single-input-item">
+                            <label for="current-password" class="required">Current Password <span>*</span></label>
+                            <input type="password" id="current-password" name="current_password"  />
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="single-input-item">
+                            <label for="new-password" class="required">New Password <span>*</span></label>
+                            <input type="password" id="new-password" name="new_password"  />
+                        </div>
+                    </div>
+                </div>
+                <div class="single-input-item col-lg-6">
+                    <label for="confirm-password" class="required">Confirm New Password <span>*</span></label>
+                    <input type="password" id="confirm-password" name="confirm_password"  />
+                </div>
+                <div class="single-input-item">
+                    <button type="submit" class="check-btn sqr-btn btn btn-primary mt-3">Change Password</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

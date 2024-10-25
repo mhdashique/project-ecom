@@ -1,0 +1,474 @@
+
+{% extends "user_base.html" %}
+{% block content %}
+{% load static %}
+
+<div class="breadcrumb-area section-padding-1 bg-gray d-flex align-items-end py-4 " Style="height: 15rem;">
+    <div class="container-fluid">
+        <div class="breadcrumb-content text-center">
+            <div class="breadcrumb-title">
+                <h2>My Account</h2>
+            </div>
+            <ul>
+                <li>
+                    <a href="index.html">Home 01 </a>
+                </li>
+                <li><span> &gt; </span></li>
+                <li class="active"> My Account </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="my-account-area pt-30 pb-95">
+    <div class="container">
+        <div class="row flex-row-reverse">
+            <div class="col-lg-12">
+                <ul class="myaccount-tab-menu nav" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link active text-dark" id="dashboard-tab" data-bs-toggle="tab" href="#dashboard" role="tab" aria-controls="dashboard" aria-selected="true">My Account</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link text-dark" id="orders-tab" data-bs-toggle="tab" href="#orders" role="tab" aria-controls="orders" aria-selected="false">Orders</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link text-dark" id="download-tab" data-bs-toggle="tab" href="#download" role="tab" aria-controls="download" aria-selected="false">wallet</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link text-dark" id="address-tab" data-bs-toggle="tab" href="#address-edit" role="tab" aria-controls="address-edit" aria-selected="false">Address</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link text-dark" href="{% url 'logout'%}">Logout</a>
+                    </li>
+                </ul>
+                <style>
+                    .nav-link.active {
+                    font-weight: bold; /* Bold font for the active tab */
+                  }
+                </style>
+                <!-- My Account Tab Menu End -->
+                <!-- My Account Tab Content Start -->
+                <div class="tab-content" id="myaccountContent">
+                    <!-- Single Tab Content Start -->
+                    <div class="tab-pane fade show active " id="dashboard" role="tabpanel" >
+                        <div class="d-flex justify-content-center">
+                            <div class="myaccount-content p-4 rounded shadow-sm bg-light ">
+                                <div class="welcome mb-4">
+                                    <h5 class="mb-0">Hello, <strong>{{ user.username }}</strong></h5>
+                                </div>
+                            
+                                <div class="user-details">
+                                    <p><strong>Email:</strong> {{ user.email }}</p>
+                                    {% if user.phone %}
+                                        <p><strong>Phone:</strong> {{ user.phone }}</p>
+                                    {% else %}
+                                        <p><strong>Phone:</strong> Not provided</p>
+                                    {% endif %}
+                                    {% if user.dob %}
+                                        <p><strong>Date of Birth:</strong> {{ user.dob }}</p>
+                                    {% else %}
+                                        <p><strong>Date of Birth:</strong> Not provided</p>
+                                    {% endif %}
+                                    {% if user.gender %}
+                                        <p><strong>Gender:</strong> 
+                                            {% if user.gender == 'm' %}
+                                                Male
+                                            {% elif user.gender == 'F' %}
+                                                Female
+                                            {% elif user.gender == 'O' %}
+                                                Other
+                                            {% endif %}
+                                        </p>
+                                    {% else %}
+                                        <p><strong>Gender:</strong> Not specified</p>
+                                    {% endif %}
+                                </div>
+                            
+                                <a href="{% url 'edit_profile' %}" class="check-btn sqr-btn btn btn-dark mt-3"><i class="fa fa-edit"></i> Edit Profile</a>
+                                <a href="{% url 'change_pasword' %}" class="check-btn sqr-btn btn btn-dark mt-3"><i class="fa fa-edit"></i> Change Password</a>
+                            </div>
+                        </div>
+                        
+                        
+                    </div>
+                    
+                    
+                    <!-- Single Tab Content End -->
+                    <!-- Single Tab Content Start -->
+                     <style>.order-list {
+                        font-family: Arial, sans-serif;
+                    }
+                    
+                    .order-item {
+                        border: 1px solid #ddd;
+                        margin-bottom: 20px;
+                        padding: 20px;
+                    }
+                    
+                    .order-details {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                    }
+                    
+                    .order-info {
+                        display: flex;
+                        gap: 70px;
+                    }
+                    
+                    .order-date, .order-total, .order-id, .order-status {
+                        font-size: 12px;
+                        line-height: 1.4;
+                    }
+                    
+                    .order-date, .order-total {
+                        color: #565959;
+                    }
+                    
+                    .order-id {
+                        color: #007185;
+                    }
+                    
+                    .order-status {
+                        color: #565959; /* Color for the status */
+                    }
+                    
+                    .order-actions {
+                        display: flex;
+                        gap: 20px;
+                    }
+                    
+                    .view-details, .view-invoice {
+                        color: #007185;
+                        text-decoration: none;
+                        font-size: 14px;
+                    }
+                    
+                    .view-invoice i {
+                        margin-left: 5px;
+                    }
+                    </style>
+                    <div class="tab-pane fade" id="orders" role="tabpanel">
+                        <div class="myaccount-content">
+                            <div class="order-list">
+                                {% for order in orders %}
+                                <div class="order-item">
+                                    <div class="order-details">
+                                        <div class="order-info">
+                                            <div class="order-date">ORDER PLACED<br><strong>{{ order.order_date|date:"d F Y" }}</strong></div>
+                                            <div class="order-total">TOTAL<br><strong>${{ order.total_amount }}</strong></div>
+                                            <div class="order-id">ORDER # {{ order.id }}</div>
+                                            <div class="order-status">
+                                                PAYMENT STATUS<br>
+                                                {% if order.payment_status == 'Failed' %}
+                                                <strong class="text-danger">{{ order.payment_status }}</strong>
+                                                {% elif order.payment_status == 'Paid' %}
+                                                    <strong class="text-success">{{ order.payment_status }}</strong>
+                                                {% else %} 
+                                                    <strong class="text-primary">{{ order.payment_status }}</strong>   
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="order-actions">
+                                            <a href="{% url 'order_view' order.id %}" class="view-details"><strong>View order details</strong></a>
+                                            {% comment %} <a href="{% url 'invoice' order.id %}" class="view-invoice"><strong>Invoice</strong> <i class="fas fa-chevron-down"></i></a> {% endcomment %}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Single Tab Content End -->
+                    <!-- Single Tab Content Start -->
+                    <style>
+                        {% comment %} .myaccount-content {
+                            max-width: 800px;
+                            margin: 0 auto;
+                            padding: 20px;
+                            background-color: #f9f9f9;
+                            border-radius: 10px;
+                            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+                        } {% endcomment %}
+                    
+                        .wallet-container {
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                            margin-bottom: 30px;
+                        }
+                    
+                        .wallet-info {
+                            text-align: center;
+                        }
+                    
+                        .wallet-balance {
+                            font-size: 24px;
+                            font-weight: bold;
+                            color: #333;
+                            margin-bottom: 15px;
+                        }
+                    
+                        .add-funds-form {
+                            display: flex;
+                            align-items: center;
+                            gap: 10px;
+                        }
+                    
+                        .add-funds-input {
+                            width: 150px;
+                            height: 40px;
+                            font-size: 16px;
+                            padding: 5px;
+                            border: none;
+                            border-radius: 5px;
+                            box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+                        }
+                    
+                        .add-funds-button {
+                            height: 40px;
+                            padding: 0 20px;
+                            font-size: 16px;
+                            background-color: #007bff;
+                            color: white;
+                            border: none;
+                            border-radius: 5px;
+                            cursor: pointer;
+                            transition: background-color 0.3s ease;
+                        }
+                    
+                        .add-funds-button:hover {
+                            background-color: #0056b3;
+                        }
+                    
+                        .transaction-history {
+                            margin-top: 30px;
+                        }
+                    
+                        .transaction-list {
+                            list-style-type: none;
+                            padding: 0;
+                        }
+                    
+                        .transaction-item {
+                            padding: 10px;
+                            border-bottom: 1px solid #ddd;
+                        }
+                    
+                        .transaction-item:last-child {
+                            border-bottom: none;
+                        }
+                    
+                        .transaction-type {
+                            font-weight: bold;
+                        }
+                    
+                        @media screen and (max-width: 768px) {
+                            .wallet-container {
+                                flex-direction: column;
+                            }
+                    
+                            .wallet-info {
+                                margin-bottom: 20px;
+                            }
+                        }
+                    </style>
+                    <div class="tab-pane fade" id="download" role="tabpanel">
+                        
+                        
+                        <div class="myaccount-content border">
+                            <h1 class="text-center">Your Wallet</h1>
+                            <br>
+                            <!-- Wallet Container Centered -->
+                            <div class="wallet-container d-flex justify-content-center align-items-center">
+                                <!-- Wallet Info Section -->
+                                <div class="wallet-info text-center">
+                                    <h2 class="wallet-balance">Balance: ₹{{ wallet.balance }}</h2>
+                                    <form id="add-funds-form" class="add-funds-form mt-3">
+                                        {% csrf_token %}
+                                        <input type="number" step="0.01" name="amount" required class="form-control add-funds-input mx-auto" style="width: 200px;">
+                                        <button type="submit" class="btn btn-primary mt-2">Add</button>
+                                    </form>
+                                </div>
+                            </div>
+                        
+                            <!-- Transaction History Section -->
+                            <div class="transaction-history mt-5">
+                                <h3 class="text-center">Transaction History</h3>
+                                <ul class="transaction-list list-group list-group-flush mx-auto" style="max-width: 800px;">
+                                    {% for transaction in transactions %}
+                                    <li class="transaction-item list-group-item d-flex justify-content-between">
+                                        <span class="transaction-type">{{ transaction.transaction_type }}</span>
+                                        <span>₹{{ transaction.amount }}</span>
+                                        <span>{{ transaction.timestamp }}</span>
+                                        <span>{{ transaction.description }}</span>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <!-- Razorpay Script -->
+                        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+                        <script>
+                        document.getElementById('add-funds-form').onsubmit = function(e) {
+                            e.preventDefault();
+                        
+                            // Get the amount from the form
+                            var amount = document.querySelector('input[name="amount"]').value;
+                        
+                            // Send AJAX request to create Razorpay order
+                            fetch("{% url 'add_fund_wallet' %}", {
+                                method: "POST",
+                                headers: {
+                                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                                    'Content-Type': 'application/x-www-form-urlencoded'
+                                },
+                                body: new URLSearchParams({
+                                    'amount': amount
+                                })
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.error) {
+                                    alert(data.error);
+                                } else {
+                                    var options = {
+                                        "key": data.razorpay_merchant_key,
+                                        "amount": data.amount * 100,  // Convert to paise
+                                        "currency": "INR",
+                                        "name": "Your Company Name",
+                                        "description": "Add Funds to Wallet",
+                                        "order_id": data.order_id,
+                                        "handler": function (response){
+                                            document.getElementById('razorpay_payment_id').value = response.razorpay_payment_id;
+                                            document.getElementById('razorpay_order_id').value = response.razorpay_order_id;
+                                            document.getElementById('razorpay_signature').value = response.razorpay_signature;
+                                            document.getElementById('razorpay-form').submit();
+                                        },
+                                        "prefill": {
+                                            "name": "{{ request.user.get_full_name }}",
+                                            "email": "{{ request.user.email }}",
+                                            "contact": "{{ request.user.phone }}"
+                                        },
+                                        "theme": {
+                                            "color": "#F37254"
+                                        }
+                                    };
+                                    var rzp1 = new Razorpay(options);
+                                    rzp1.open();
+                                }
+                            })
+                            .catch(error => console.error('Error:', error));
+                        }
+                        
+                        // Hidden form to submit the payment details
+                        </script>
+                        
+                        <form action="{% url 'razorpay_wallet_callback' %}" method="POST" id="razorpay-form" style="display: none;">
+                            {% csrf_token %}
+                            <input type="hidden" name="razorpay_payment_id" id="razorpay_payment_id">
+                            <input type="hidden" name="razorpay_order_id" id="razorpay_order_id">
+                            <input type="hidden" name="razorpay_signature" id="razorpay_signature">
+                        </form>
+                        
+
+                 </div>
+                    <!-- Single Tab Content End -->
+                    <!-- Single Tab Content Start -->
+                    <div class="tab-pane fade" id="address-edit" role="tabpanel" >
+                        <div class="container d-flex justify-content-start p-3">
+                            <a href="{% url 'add_address' user.id %}?return_url=profile" class="btn btn-sm btn-info btn-add-address">
+                                <i class="fa fa-plus"></i> Add Address
+                            </a>
+                        </div>
+                        <div class="container">
+                            <div class="myaccount-content">
+                                {% if address.exists %}
+                                    <div class="row">
+                                        {% for ads in address %}
+                                            <div class="col-md-4">
+                                                <div class="address-card" style="border: 2px solid black; padding: 15px; margin-bottom: 20px;">
+                                                    <address>
+                                                        <p><strong>{{ ads.name }}</strong></p>
+                                                        <p>{{ ads.street_address }} <br>
+                                                           {{ ads.city }}, {{ ads.state }}, {{ ads.pincode }}<br>
+                                                           {{ ads.country }}</p>
+                                                        <p>Mobile: {{ ads.phone }}</p>
+                                                    </address>
+                                                    <div class="d-flex justify-content-between">
+                                                        <a href="{% url 'edit_address' ads.id %}" class="check-btn sqr-btn text-primary" id="edit-address"><i class="fa fa-edit"></i> Edit Address</a>
+                                                        <a href="{% url 'delete_address' ads.id %}" class="check-btn sqr-btn text-danger" id="delete-address"><i class="fa fa-edit"></i> delete Address</a></div>
+                                                    </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <!-- Single Tab Content End -->
+                    <!-- Single Tab Content Start -->
+                    <!-- <div class="tab-pane fade" id="account-info" role="tabpanel">
+                        <div class="myaccount-content">
+                            <div class="account-details-form">
+                                <form action="#">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="single-input-item">
+                                                <label for="first-name" class="required">First Name <span>*</span></label>
+                                                <input type="text" id="first-name" />
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="single-input-item">
+                                                <label for="last-name" class="required">Last Name <span>*</span></label>
+                                                <input type="text" id="last-name" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="single-input-item">
+                                        <label for="display-name" class="required">Display Name <span>*</span></label>
+                                        <input type="text" id="display-name" />
+                                    </div>
+                                    <div class="single-input-item">
+                                        <label for="email" class="required">Email Addres <span>*</span></label>
+                                        <input type="email" id="email" />
+                                    </div>
+                                    <fieldset>
+                                        <legend>Password change</legend>
+                                        <div class="single-input-item">
+                                            <label for="current-pwd" class="required">Current password (leave blank to leave unchanged)</label>
+                                            <input type="password" id="current-pwd" />
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="single-input-item">
+                                                    <label for="new-pwd" class="required">New password (leave blank to leave unchanged)</label>
+                                                    <input type="password" id="new-pwd" />
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-12">
+                                                <div class="single-input-item">
+                                                    <label for="confirm-pwd" class="required">Confirm new password</label>
+                                                    <input type="password" id="confirm-pwd" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                    <div class="single-input-item">
+                                        <button class="check-btn sqr-btn ">Save Changes</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div> Single Tab Content End -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

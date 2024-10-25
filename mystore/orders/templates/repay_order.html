@@ -1,0 +1,139 @@
+{% extends "user_base.html" %}
+{% block content %}
+{% load static %}
+
+<div class="container p-4 my-5">
+    <div class="breadcrumb-area section-padding-1  py-4">
+        <h1 class="text-2xl text-center py-5 mb-6">Complete Your Payment</h1>
+        
+        <!-- Order Summary -->
+        <div class="mb-8">
+            <h3>Order Summary</h3>
+            <div class="border rounded p-3 my-4">
+                <div class="row  mb-2 px-3">
+                    <div class="col-md-3">
+                        <strong>Order ID:</strong><br>
+                        <span>#{{ order.id }}</span>
+                    </div>
+                    <div class="col-md-3">
+                        <strong>Subtotal:</strong><br>
+                        <span>₹{{ order.sub_total }}</span>
+                    </div>
+                    {% if order.discount %}
+                    <div class="col-md-3">
+                        <strong>Discount:</strong><br>
+                        <span>-₹{{ order.discount }}</span>
+                    </div>
+                    {% endif %}
+                    <div class="col-md-3 font-bold">
+                        <strong>Total Amount:</strong><br>
+                        <span>₹{{ order.total_amount }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+
+        <!-- Hidden inputs for Razorpay -->
+        <input type="hidden" id="order_id" value="{{ order.id }}">
+        <input type="hidden" id="order_total" value="{{ order.total_amount }}">
+        <input type="hidden" id="order_subtotal" value="{{ order.sub_total }}">
+        <input type="hidden" id="address_id" value="{{ order.address_id }}">
+        <input type="hidden" id="razorpay_payment_id" name="razorpay_payment_id">
+        <input type="hidden" id="razorpay_order_id" name="razorpay_order_id" value="{{ razorpay_order_id }}">
+        <input type="hidden" id="razorpay_signature" name="razorpay_signature">
+
+        <!-- Payment Button -->
+        <div class="text-center">
+            <button id="pay-now-btn" class="btn btn-primary">
+                Pay Now 
+            </button>
+        </div>
+
+        <div class="thank-you mt-4">
+            <p>We’ll send you shipping confirmation when your item(s) are on the way! We appreciate your business, and hope you enjoy your purchase.</p>
+            <p><strong>Thank you!</strong><br>toro</p>
+        </div>
+    </div>
+</div>
+
+<!-- Razorpay Script -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+document.getElementById('pay-now-btn').onclick = function(e) {
+    e.preventDefault();
+    var options = {
+        "key": "{{ razorpay_merchant_key }}",   
+        "amount": "{{ razorpay_amount }}",
+        "currency": "{{ currency }}",
+        "name": "Your Company Name",
+        "description": "Order #{{ order.id }} Payment",
+        "order_id": "{{ razorpay_order_id }}",
+        "handler": function(response) {
+            handlePayment(response, {
+               // address_id: document.getElementById('address_id').value,
+                order_id: document.getElementById('order_id').value,
+               // order_total: document.getElementById('order_total').value,
+               // order_subtotal: document.getElementById('order_subtotal').value,
+               // payment_method: 'razorpay',
+               // payment_status: 'SUCCESS'
+            });
+        },
+        "modal": {
+            "ondismiss": function() {
+                console.log("Payment modal closed without payment");
+            }
+        },
+        "prefill": {
+            "name": "{{ order.user.name }}",
+            "email": "{{ order.user.email }}",
+            "contact": "{{ order.user.phone }}"
+        },
+        "theme": {
+            "color": "#3B82F6"
+        }
+    };
+    var rzp = new Razorpay(options);
+    rzp.open();
+};
+
+function handlePayment(paymentResponse, orderData) {
+    // Add payment details
+    orderData.razorpay_payment_id = paymentResponse.razorpay_payment_id;
+    orderData.razorpay_order_id = paymentResponse.razorpay_order_id;
+    orderData.razorpay_signature = paymentResponse.razorpay_signature;
+
+    // Send payment data to server
+    $.ajax({
+        method: 'POST',
+        url: '/repay_success/',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+        },
+        data: orderData,
+        success: function(response) {
+            console.log("Payment processed successfullyrtretyr!");
+            if (response.redirect_url) {
+                window.location.href = response.redirect_url;
+            }
+        },
+        error: function(error) {
+            console.error("Payment processing error:", error);
+            alert("There was an error processing your payment. Please try again.");
+        }
+    });
+}
+</script>
+
+{% if messages %}
+<div class="fixed bottom-4 right-4">
+    {% for message in messages %}
+    <div class="bg-{{ message.tags }}-100 border border-{{ message.tags }}-400 text-{{ message.tags }}-700 px-4 py-3 rounded relative mb-2" role="alert">
+        <span class="block sm:inline">{{ message }}</span>
+    </div>
+    {% endfor %}
+</div>
+
+{% endif %}
+{% endblock %}

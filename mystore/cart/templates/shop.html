@@ -1,0 +1,188 @@
+{% extends "user_base.html" %}
+{% block content %}
+{% load static %}
+
+
+<div class="breadcrumb-area section-padding-1 bg-gray d-flex align-items-end py-4 " Style="height: 15rem;">
+    <div class="container-fluid">
+        <div class="breadcrumb-content text-center">
+            <div class="breadcrumb-title">
+                <h2>Shop</h2>
+            </div>
+            <ul>
+                <li>
+                    <a href="index.html">Home 01 </a>
+                </li>
+                <li><span> &gt; </span></li>
+                <li class="active"> shop </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="shop-area section-padding-1 pt-20 pb-100">
+    <div class="container-fluid">
+        <div class="shop-top-bar">
+            <div class="shop-top-bar-left">
+                <div class="shop-top-show">
+                    <span>Showing 1–12 </span>
+                </div>
+            </div>
+            <div class="shop-top-bar-right">
+                <div class="shop-tab nav">
+                    <a href="#shop-1" class="active" data-bs-toggle="tab"><i class="dlicon ui-2_grid-45"></i></a>
+                    <a href="#shop-2" data-bs-toggle="tab"><i class="dlicon design_bullet-list-69"></i></a>
+                </div>
+                <div class="shop-filter ml-35">
+                    {% comment %} <a class="shop-filter-active" href="#">Filters <i class="fa fa-angle-down angle-down"></i> <i class="fa fa-angle-up angle-up"></i></a> {% endcomment %}
+                </div>
+                <form method="GET" action="">    
+                 <div class="d-flex justify-content-center align-items-center"> 
+                
+                <div class="shop-category ml-20">
+                    <select name="category" onchange="this.form.submit()">
+                        <option value="">Category</option>
+                        {% for category in categories %}
+                            <option value="{{ category.id }}" {% if category.id|stringformat:"s" == selected_category %}selected{% endif %}>
+                                {{ category.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="shop-short-by ml-20">
+                    <select name="sort" onchange="this.form.submit()" >
+                        <option value="">Sort by</option>
+                        <option value="latest" {% if request.GET.sort == 'latest' %}selected{% endif %}>Sort by latest</option>
+                        <option value="price_asc" {% if request.GET.sort == 'price_asc' %}selected{% endif %}>Sort by price: low to high</option>
+                        <option value="price_desc" {% if request.GET.sort == 'price_desc' %}selected{% endif %}>Sort by price: high to low</option>
+                        <option value="aA-zZ" {% if request.GET.sort == 'aA-zZ' %}selected{% endif %}>Sort by aA - zZ</option>
+                        <option value="zZ-aA" {% if request.GET.sort == 'zZ-aA' %}selected{% endif %}>Sort by zZ - aA </option>
+                        <option value="stock" {% if request.GET.sort == 'stock' %}selected{% endif %}>Hidden out-of-stock </option>
+                    </select>
+                 </div>
+                </div>
+                </form>
+            </div>
+
+        </div>
+        <div class="product-filter-wrapper">
+            <div class="row">
+                <!-- Product Filter -->
+                <div class="col-md-3 col-sm-6 col-xs-12 mb-20">
+                    <div class="product-filter">
+                        <h5>Price</h5>
+                        <div class="price-filter">
+                            <ul>
+                                <li><a href="#">$0.00 - $20.00</a></li>
+                                <li><a href="#">$20.00 - $40.00</a></li>
+                                <li><a href="#">$30.00 - $50.00</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <!-- Product Filter -->
+                <div class="col-md-3 col-sm-6 col-xs-12 mb-20">
+                    <div class="product-filter">
+                        <h5>Size</h5>
+                        <div class="product-size">
+                            <ul>
+                                <li><a href="#">Full Size</a></li>
+                                <li><a href="#">L</a></li>
+                                <li><a href="#">M</a></li>
+                                <li><a href="#">S</a></li>
+                                <li><a href="#">XL</a></li>
+                                <li><a href="#">XXL</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <!-- Product Filter -->
+                <div class="col-md-3 col-sm-6 col-xs-12 mb-20">
+                    <div class="product-filter">
+                        <h5>color</h5>
+                        <div class="product-category">
+                            <ul>
+                                 <li><a href="#">Blue</a></li>
+                                <li><a href="#">Brown</a></li>
+                                <li><a href="#">Green</a></li>
+                                <li><a href="#"> Pink</a></li>
+                                <li><a href="#">Violet</a></li>
+                                <li><a href="#"> White</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <!-- Product Filter -->
+                <div class="col-md-3 col-sm-6 col-xs-12 mb-20">
+                    <div class="product-filter">
+                        <h5>Brands</h5>
+                        <div class="product-brands">
+                            <ul>
+                                <li><a href="#">Airi</a></li>
+                                <li><a href="#">Draven</a></li>
+                                <li><a href="#">Mango</a></li>
+                                <li><a href="#"> Valentino</a></li>
+                                <li><a href="#">Zara </a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-content jump-3 pt-30">
+            <div id="shop-1" class="tab-pane active">
+                <div class="row">
+                    {% for product in page_obj %}
+                    <div class="custom-col-5">
+                        <div class="product-wrap mb-50">
+                            <div class="product-img default-overlay mb-25">
+                                <a href="{% url 'product_detail' product.id %}">
+                                    <img class="default-img" src="{{ product.img1.url }}" alt="{{ product.name }}">
+                                    {% if product.img2 %}
+                                    <img class="hover-img" src="{{ product.img2.url }}" alt="{{ product.name }}">
+                                    {% endif %}
+                                </a>
+                                <div class="product-action product-action-position-1">
+                                    <a data-bs-toggle="modal" data-bs-target="#exampleModal" href="#"><i class="fa fa-eye"></i><span>Quick Shop</span></a>
+                                    <a title="Add to Wishlist" href="{% url 'add_to_wishlist' product.id %}"><i class="fa fa-heart"></i><span>Add to Wishlist</span></a>
+                                    <a class="icon-blod" title="Add to Compare" href="#"><i class="dlicon arrows-4_compare"></i><span>Add to Compare</span></a>
+                                    <a title="Add to Cart" href=""><i class="fa fa-shopping-cart"></i><span>Add to Cart</span></a>
+                                </div>
+                            </div>
+                            <div class="product-content-2 title-font-width-400 text-center">
+                                <h3><a href="{% url 'product_detail' product.id %}">{{ product.name }}</a></h3>
+                                <div class="product-price">
+                                    {% with offer_price=product.get_offer_price %}
+                                        {% if offer_price %}
+                                            <span class="new-price">${{ offer_price }}</span>
+                                            <span class=" text-danger old-price">${{ product.price }}</span> <!-- Original price -->
+                                        {% else %}
+                                            <span class="new-price">${{ product.price }}</span>
+                                        {% endif %}
+                                    {% endwith %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="pro-pagination-style text-center">
+                <ul>
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li><a class="active" href="?page={{ num }}">{{ num }}</a></li>
+                        {% else %}
+                            <li><a href="?page={{ num }}">{{ num }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                    <!-- Only render the "next page" link if there actually is a next page -->
+                    {% if page_obj.has_next %}
+                        <li><a href="?page={{ page_obj.next_page_number }}"><i class="dlicon arrows-1_tail-right"></i></a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

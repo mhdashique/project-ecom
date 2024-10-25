@@ -1,0 +1,30 @@
+{% extends "admin_base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5 py-5">
+    <div class="col-12 mb-3 d-flex justify-content-between align-items-center ">
+        <h2>Add Category</h2>
+        <a href="{% url 'admin_category' %}" class="btn btn-dark">back</a>
+    </div>
+    
+    <form method="post" action="{% url 'add_category' %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="name">Category Name:</label>
+            <input type="text" class="form-control" id="name" name="name"  required>
+        </div>
+        <div class="form-group">
+            <label for="isListed">Is Listed</label>
+            <select class="form-control" id="isListed" name="is_listed" required>
+                <option value="True">Yes</option>
+                <option value="False">No</option>
+            </select>
+        </div>
+        <div class="form-group mt-3">
+            <button type="submit" class="btn btn-dark">Add Category</button>
+            <button type="reset" class="btn btn-secondary ms-2">Cancel</button>
+        </div>
+    </form>
+</div>
+{% endblock content %}

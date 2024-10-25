@@ -1,0 +1,302 @@
+{% extends "admin_base.html" %}
+
+{% block content %}
+<div class="main-panel">
+    <div class="content-wrapper">
+        <div class="row">
+            <div class="col-12 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Sales Dashboard</h4>
+                        <form method="get" class="forms-sample">
+                            <div class="form-group">
+                                <label for="time_period">Time Period</label>
+                                <select class="form-control" id="time_period" name="time_period">
+                                    <option value="day" {% if time_period == 'day' %}selected{% endif %}>Last 24 Hours</option>
+                                    <option value="week" {% if time_period == 'week' %}selected{% endif %}>Last Week</option>
+                                    <option value="month" {% if time_period == 'month' %}selected{% endif %}>Last Month</option>
+                                    <option value="year" {% if time_period == 'year' %}selected{% endif %}>Last Year</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary mr-2">Apply</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-9">
+                                <div class="d-flex align-items-center align-self-start">
+                                    <h3 class="mb-0">${{ total_sales|floatformat:2 }}</h3>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="icon icon-box-success">
+                                    <span class="mdi mdi-arrow-top-right icon-item"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <h6 class="text-muted font-weight-normal">Total Sales</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-9">
+                                <div class="d-flex align-items-center align-self-start">
+                                    <h3 class="mb-0">{{ total_orders }}</h3>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="icon icon-box-success">
+                                    <span class="mdi mdi-arrow-top-right icon-item"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <h6 class="text-muted font-weight-normal">Total Orders</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-9">
+                                <div class="d-flex align-items-center align-self-start">
+                                    <h3 class="mb-0">${{ avg_order_value|floatformat:2 }}</h3>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="icon icon-box-success">
+                                    <span class="mdi mdi-arrow-top-right icon-item"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <h6 class="text-muted font-weight-normal">Average Order Value</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-9">
+                                <div class="d-flex align-items-center align-self-start">
+                                    <h3 class="mb-0">{{ returning_customers|floatformat:2 }}%</h3>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="icon icon-box-danger">
+                                    <span class="mdi mdi-arrow-bottom-left icon-item"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <h6 class="text-muted font-weight-normal">Returning Customers</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+          <!-- Top Products Table -->
+          <div class="col-md-6 grid-margin stretch-card">
+              <div class="card">
+                  <div class="card-body">
+                      <h4 class="card-title">Top Products</h4>
+                      <div class="table-responsive">
+                          <table class="table">
+                              <thead>
+                                  <tr>
+                                      <th>Product</th>
+                                      <th>Total Sold</th>
+                                      <th>Revenue</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  {% for product in top_products %}
+                                  <tr>
+                                      <td>{{ product.name }}</td>
+                                      <td>{{ product.total_sold }}</td>
+                                      <td>${{ product.revenue|floatformat:2 }}</td>
+                                  </tr>
+                                  {% endfor %}
+                              </tbody>
+                          </table>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      
+          <!-- Order Status Table -->
+          <div class="col-md-6 grid-margin stretch-card">
+              <div class="card">
+                  <div class="card-body">
+                      <h4 class="card-title">Order Status</h4>
+                      <div class="table-responsive">
+                          <table class="table">
+                              <thead>
+                                  <tr>
+                                      <th>Status</th>
+                                      <th>Total Orders</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  <tr>
+                                      <td>Completed</td>
+                                      <td>{{ order_status.completed }}</td>
+                                  </tr>
+                                  <tr>
+                                      <td>Pending</td>
+                                      <td>{{ order_status.pending }}</td>
+                                  </tr>
+                                  <tr>
+                                      <td>Canceled</td>
+                                      <td>{{ order_status.canceled }}</td>
+                                  </tr>
+                              </tbody>
+                          </table>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      
+          <!-- Payment Methods Table -->
+          <div class="col-md-6 grid-margin stretch-card">
+              <div class="card">
+                  <div class="card-body">
+                      <h4 class="card-title">Payment Methods Breakdown</h4>
+                      <div class="table-responsive">
+                          <table class="table">
+                              <thead>
+                                  <tr>
+                                      <th>Payment Method</th>
+                                      <th>Total Orders</th>
+                                      <th>Total Amount</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  {% for payment in payment_methods %}
+                                  <tr>
+                                      <td>{{ payment.payment_method }}</td>
+                                      <td>{{ payment.total_orders }}</td>
+                                      <td>${{ payment.total_amount|floatformat:2 }}</td>
+                                  </tr>
+                                  {% endfor %}
+                              </tbody>
+                          </table>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      
+          <!-- Category Sales Chart -->
+          <div class="col-md-6 grid-margin stretch-card">
+              <div class="card">
+                  <div class="card-body">
+                      <h4 class="card-title">Category Sales</h4>
+                      <canvas id="categorySalesChart"></canvas>
+                  </div>
+              </div>
+          </div>
+      </div>
+    
+
+        <div class="row">
+            <div class="col-md-6 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Sales Over Time</h4>
+                        <canvas id="salesOverTimeChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Orders Over Time</h4>
+                        <canvas id="ordersOverTimeChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Category Sales Chart
+    var ctxCategorySales = document.getElementById('categorySalesChart').getContext('2d');
+    var categorySalesChart = new Chart(ctxCategorySales, {
+        type: 'bar',
+        data: {
+            labels: [{% for category in category_sales %}'{{ category.name }}',{% endfor %}],
+            datasets: [{
+                label: 'Sales',
+                data: [{% for category in category_sales %}{{ category.total_sales|default:0 }},{% endfor %}],
+                backgroundColor: 'rgba(75, 192, 192, 0.6)'
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Sales Over Time Chart
+    var ctxSalesOverTime = document.getElementById('salesOverTimeChart').getContext('2d');
+    var salesOverTimeChart = new Chart(ctxSalesOverTime, {
+        type: 'line',
+        data: {
+            labels: [{% for item in sales_over_time %}'{{ item.date|date:"Y-m-d" }}',{% endfor %}],
+            datasets: [{
+                label: 'Sales',
+                data: [{% for item in sales_over_time %}{{ item.total_sales }},{% endfor %}],
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Orders Over Time Chart
+    var ctxOrdersOverTime = document.getElementById('ordersOverTimeChart').getContext('2d');
+    var ordersOverTimeChart = new Chart(ctxOrdersOverTime, {
+        type: 'line',
+        data: {
+            labels: [{% for item in orders_over_time %}'{{ item.date|date:"Y-m-d" }}',{% endfor %}],
+            datasets: [{
+                label: 'Orders',
+                data: [{% for item in orders_over_time %}{{ item.total_orders }},{% endfor %}],
+                borderColor: 'rgb(255, 99, 132)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+{% endblock content %}

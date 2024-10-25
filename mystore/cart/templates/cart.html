@@ -1,0 +1,208 @@
+{% extends "user_base.html" %}
+{% block content %}
+{% load static %}
+{% load custom_filters %}
+
+<div class="breadcrumb-area section-padding-1 bg-gray d-flex align-items-end py-4" style="height: 15rem;">
+    <div class="container-fluid">
+        <div class="breadcrumb-content text-center">
+            <div class="breadcrumb-title">
+                <h2>Shopping Cart</h2>
+            </div>
+            <ul>
+                <li>
+                    <a href="{% url 'home' %}">Home</a>
+                </li>
+                <li><span> &gt; </span></li>
+                <li class="active"> Shopping Cart </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- cart start -->
+
+<div class="cart-main-area pt-90 pb-100">  
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                <form method="POST" action="">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="table-content table-responsive cart-table-content">
+                                <table style="width: 100%; table-layout: fixed;">
+                                    <thead>
+                                        <style>
+                                            .cart-plus-minus-box{
+                                                width: 75px;
+                                                text-align: center;
+                                                border-width: 2px;
+                                            }
+                                        </style>
+                                        <tr id="item-row-{{ item.id }}">
+                                            <th style="font-weight: bold; width: 40px; font-size: 1.1em;"></th>
+                                            <th style="font-weight: bold; width: 100px; font-size: 1.1em;">Image</th>
+                                            <th style="font-weight: bold; width: 250px; font-size: 1.1em;">Product</th>
+                                            <th style="font-weight: bold; width: 90px; font-size: 1.1em;">Price</th>
+                                            <th style="font-weight: bold; width: 100px; font-size: 1.1em;">Quantity</th>
+                                            <th style="font-weight: bold; width: 90px; font-size: 1.1em;">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if cart_items %}
+                                            {% for item in cart_items %}
+                                            <tr>
+                                                <td class="product-remove" style="width: 20px;">
+                                                    <a href="{% url 'cart_remove' item.id %}">
+                                                        <i class="dlicon ui-1_simple-remove"></i>
+                                                    </a>
+                                                </td>
+                                                <td class="product-img">
+                                                    <a href="{% url 'product_detail' item.variant.product.id %}">
+                                                        <img style="width: 70px; height: 80px; border-radius: 5px;" src="{{ item.variant.product.img1.url }}" alt="{{ item.variant.product.name }}">
+                                                    </a>
+                                                </td>
+                                                <td class="product-name">
+                                                    <a style="font-size: medium;" href="{% url 'product_detail' item.variant.product.id %}">
+                                                        <strong>{{ item.variant.product.name }}</strong><br>
+                                                        <span>Size: {{ item.variant.get_size_display }}</span>
+                                                    </a>
+                                                </td>
+                                                <td class="product-price">
+                                                    {% with offer_price=item.variant.product.get_offer_price %}
+                                                        {% if offer_price %}
+                                                            <span id="price-{{ item.id }}" class="amount">${{ offer_price }}</span>
+                                                            {% comment %} <span class="old-price">${{ item.variant.product.price|floatformat:2 }}</span> {% endcomment %}
+                                                        {% else %}
+                                                            <span id="price-{{ item.id }}" class="amount">${{ item.variant.product.price|floatformat:2 }}</span>
+                                                        {% endif %}
+                                                    {% endwith %}
+                                                </td>                                                
+                                                <td class="cart-qty">
+                                                    {% if quantity_ranges|get_item:item.id %}
+                                                    <select onchange="cartUpdate('{{ item.id }}', this)" class="cart-plus-minus-box form-control-sm quantity-update" data-item-id="{{ item.id }}" id="quantity-{{ item.id }}">
+                                                        {% for i in quantity_ranges|get_item:item.id %}
+                                                            <option value="{{ i }}" {% if i == item.quantity %}selected{% endif %}>
+                                                                {{ i }}
+                                                            </option>
+                                                        {% endfor %}
+                                                    </select>
+                                                    {% else %}
+                                                        <span class="text-danger">Out of Stock</span>
+                                                    {% endif %}                             
+                                                </td>
+                                                <td class="product-total">
+                                                    <span id="total-{{ item.id }}">${{ item.total_price|floatformat:2 }}</span>
+                                                </td>
+                                                
+                                            </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr>
+                                                <td colspan="6" style="text-align: center; padding: 20px;">Your cart is empty</td>
+                                            </tr>
+                                        {% endif %}
+                                        <input type="hidden" id="anyOutOfStock" value="{{ any_out_of_stock }}">
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="cart-shiping-update-wrapper">
+                                <div class="cart-clear">
+                                    <a href="{% url 'cart_clear' %}">Clear Cart</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="grand-total-wrap">
+                                <h4>Cart totals</h4>
+                                <div class="grand-total-content">
+                                    <ul>
+                                        <li>Subtotal <span id="cart-subtotal">${{ cart_subtotal|floatformat:2  }}</span></li>
+                                        <li>Total <span id="cart-total">${{ cart_total|floatformat:2  }}</span></li>
+                                    </ul>
+                                </div>
+                                <div class="grand-btn">
+                                    <a id="proceedToCheckout" href="{% url 'checkout' %}">Proceed to checkout</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- <p id="csrf" hidden> {{ csrf_token }}</p> -->
+<!-- cart end -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.4/axios.min.js" integrity="sha512-6VJrgykcg/InSIutW2biLwA1Wyq+7bZmMivHw19fI+ycW0jIjsadm8wKQQLlfv3YUS4owfMDlZU38NtaAK6fSg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+    async function cartUpdate(id,elem){
+        const csrf=document.querySelector("input[name=csrfmiddlewaretoken]").value
+        const price= document.getElementById(`price-${id}`).textContent;
+        const total= document.getElementById(`total-${id}`);
+        const subTotal= document.getElementById(`cart-subtotal`);
+        const cartTotal= document.getElementById(`cart-total`);
+      
+               
+    const {data:{item_total,cart_subtotal,cart_total}}= await axios.post(`/update_cart/${id}/`,{quantity:elem.value,csrfmiddlewaretoken:csrf},{
+    headers: {
+        'Content-Type': 'application/json', 
+        'X-CSRFToken': csrf
+             }   
+            })
+    subTotal.textContent=`$${cart_subtotal}.00`
+    cartTotal.textContent=`$${cart_total}.00`
+    total.textContent=`$${item_total}.00`
+    }
+</script>
+{% comment %} <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check if the cart is empty
+        const isEmptyCart = document.getElementById('isEmptyCart').value === 'True';
+    
+        // Get the "Proceed to checkout" link
+        const proceedLink = document.getElementById('proceedToCheckout');
+    
+        if (isEmptyCart) {
+            // Disable the link by setting href to "#" and adding a "disabled" class
+            proceedLink.href = "#";
+            proceedLink.classList.add("disabled");
+            proceedLink.textContent = "Cart is empty. Please add items.";
+        } else {
+            // Enable the link by setting href to the checkout URL and removing the "disabled" class
+            proceedLink.href = "{% url 'checkout' %}";
+            proceedLink.classList.remove("disabled");
+            proceedLink.textContent = "Proceed to checkout";
+        }
+    });
+    </script> {% endcomment %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if the cart is empty
+            const isEmptyCart = document.getElementById('isEmptyCart').value === 'True';
+            
+            // Check if any product is out of stock
+            const anyOutOfStock = document.getElementById('anyOutOfStock').value === 'True';
+    
+            // Get the "Proceed to checkout" link
+            const proceedLink = document.getElementById('proceedToCheckout');
+    
+            if (isEmptyCart || anyOutOfStock) {
+                // Disable the link by setting href to "#" and adding a "disabled" class
+                proceedLink.href = "#";
+                proceedLink.classList.add("disabled");
+                proceedLink.textContent = "Cart is empty or has out of stock items.";
+            } else {
+                // Enable the link by setting href to the checkout URL and removing the "disabled" class
+                proceedLink.href = "{% url 'checkout' %}";
+                proceedLink.classList.remove("disabled");
+                proceedLink.textContent = "Proceed to checkout";
+            }
+        });
+    </script>
+    
+    <!-- Hidden input field to indicate if the cart is empty -->
+    <input type="hidden" id="isEmptyCart" value="{% if not cart_items.exists %}True{% else %}False{% endif %}">
+    
+
+{% endblock %}

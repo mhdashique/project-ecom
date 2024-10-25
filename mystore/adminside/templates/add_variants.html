@@ -1,0 +1,38 @@
+{% extends "admin_base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="col-12 grid-margin stretch-card mt-5 p-2 stretch-card" style="background-color: black;">
+    <div class="card mt-4 p-2">
+        <div class="card-body">
+            <div class="col-12 d-flex justify-content-between align-items-center">
+                <h3 class="card-title">Add Product Variant</h3>
+                <a href="{% url 'variant' product_id %}" class="btn btn-dark">Back</a>
+            </div>
+
+
+            <form class="forms-sample p-2" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+               
+                <div class="form-group">
+                    <label for="Quantity">Quantity</label>
+                    <input type="number" class="form-control" id="productqty" name="Quantity" placeholder="Quantity" ></input>
+                </div>
+                <div class="form-group ">
+                    <label for="size">Size</label>
+                    <select class="form-control" id="size" name="size">
+                        {% for value, display in size_choices %}
+                            <option value="{{ value  }}">{{ display  }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn btn-primary mr-2">Add Variant</button>
+                <button type="reset" class="btn btn-dark">Cancel</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+  
+{% endblock content %}

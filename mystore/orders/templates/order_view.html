@@ -1,0 +1,178 @@
+{% extends "user_base.html" %}
+{% block content %}
+{% load static %}
+
+<div class="container my-5">
+    <div class="breadcrumb-area section-padding-1  py-4">
+        <div class="order-confirmation text-center py-5" style="height: 10rem;">
+            <h2>Order Details!</h2>
+            {% if order %}
+            <p>Hi {{ order.user.username }},</p>
+            {% endif %}
+            <p>Your order has been confirmed and will be shipping soon.</p>
+        </div>
+        
+        <div class="order-details border rounded p-3 my-4">
+            {% if order %}
+            <div class="row mb-2 px-4">
+                <div class="col-md-2">
+                    <strong>Order Date:</strong><br> {{ order.order_date|date:"d M, Y" }}
+                </div>
+                <div class="col-md-2">
+                    <strong>Order ID:</strong><br> {{ order.id }}
+                </div>
+           
+                <div class="col-md-2">
+                    <strong>Payment:</strong> <br>{{ order.payment_method }}
+                </div>
+                <div class="col-md-2">
+                    <strong>Payment status:</strong> <br>
+                    {% if order.payment_status == 'Failed' %}
+                        <strong class="text-danger">{{ order.payment_status }}</strong>
+                    {% elif order.payment_status == 'Paid' %}
+                        <strong class="text-success">{{ order.payment_status }}</strong>
+                    {% else %} 
+                        <strong class="text-primary">{{ order.payment_status }}</strong>   
+                    {% endif %}
+                </div>
+                <div class="col-md-4">
+                    <strong>Shipping Address:</strong> <br>{{ order.address }}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    
+        <div class="order-products border rounded p-4">
+            <div class="pr_head d-flex justify-content-between align-items-center mb-2">
+                <h3 class="mb-0">Products</h3>
+                {% if order.payment_status == 'Failed' %}
+                <a href="{% url 'repay_order' order.id %}" class="btn btn-primary"> Complete Payment</a>
+                {% endif %}
+            </div>            
+            {% for product in ord_products %}
+            <div class="product-item d-flex align-items-center border-bottom py-3">
+                <div class="product-image me-4">
+                    <img src="{{ product.variant.product.img1.url }}" alt="{{ product.variant.product.name }}" style="width: 80px; height: 90px; border-radius: 5px;" />
+                </div>
+                <div class="product-details flex-grow-1">
+                    <h5 class="mb-1"><strong>{{ product.variant.product.name }}</strong></h5>
+                    size: {{ product.variant.size }}&nbsp;&nbsp;&nbsp;&nbsp; 
+                        Qty: {{ product.quantity }} &nbsp;&nbsp;&nbsp;&nbsp;
+                        status: <strong>{{ product.status }}</strong> <br>   
+                        Price: ${{ product.variant.product.price|floatformat:2 }} &nbsp;&nbsp;&nbsp;&nbsp;
+                        <br>
+                    <strong>Total Price:</strong> ${{ product.total_amount|floatformat:2 }}
+                </div>
+                <div class="order_cancel">
+                    {% if order.payment_status == 'Failed' %}
+                    <span class="text-danger"></span>
+                    {% elif product.status == 'Cancelled' %}
+                    <span class="text-danger">Cancelled</span>
+                    {% elif product.status == 'Returned' %}
+                    <span class="text-danger">Returned</span>
+                    {% elif product.status == 'Delivered' %}
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#returnModal{{ product.id }}">
+                        Return order
+                    </button>
+                    <br>
+                    <a href="{% url 'invoice' product.id %}" class="view-invoice"><strong>Invoice</strong> <i class="fas fa-chevron-down"></i></a>
+
+                    {% else %}
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#cancelModal{{ product.id }}">
+                            Cancel Order
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+    
+            <!-- Modal for each product -->
+             <style>
+                
+             </style>
+                <!-- Modal for Cancel Order -->
+        <div class="modal fade" id="cancelModal{{ product.id }}" tabindex="-1" aria-labelledby="cancelModalLabel{{ product.id }}" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 600px;"> 
+                <div class="modal-content" style="height: 200px; padding: 20px;"> 
+                    <div class="modal-header text-center">
+                        <h5 class="modal-title" id="cancelModalLabel{{ product.id }}">Confirm Cancellation</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span> 
+                        </button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <p>Are you sure you want to cancel this order for <br> <strong>{{ product.variant.product.name }}</strong>?</p>
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <form action="{% url 'cancel_order' %}" method="POST" style="display:inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="order_product_id" value="{{ product.id }}">
+                            <button type="submit" class="btn btn-danger">Confirm Cancellation</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal for Return Order -->
+        <div class="modal fade" id="returnModal{{ product.id }}" tabindex="-1" aria-labelledby="returnModalLabel{{ product.id }}" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 600px;"> 
+                <div class="modal-content" style="height: 250px; padding: 20px;"> 
+                    <div class="modal-header text-center">
+                        <h5 class="modal-title" id="returnModalLabel{{ product.id }}">Confirm Return</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <p>Are you sure you want to return this order for <br> <strong>{{ product.variant.product.name }}</strong>?</p>
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <form action="{% url 'return_order' %}" method="POST" style="display:inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="order_product_id" value="{{ product.id }}">
+                            <button type="submit" class="btn btn-danger">Confirm Return</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+        
+    
+        <div class="order-summary  border rounded mt-4 p-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <span>Subtotal</span>
+                <span>${{ order.sub_total|floatformat:2 }}</span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+                <span>Express Shipping</span>
+                <span>${{ order.shipping_cost|floatformat:2 }}0.00</span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+                <span>Taxes</span>
+                <span>${{ order.taxes|floatformat:2 }}0.00</span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center text-success">
+                <span>Discount ({{ order.discount_code }})</span>
+                <span>-  (${{ order.discount|floatformat:2 }})</span>
+            </div>
+            <hr>
+            <div class="d-flex justify-content-between align-items-center">
+                <strong>Total</strong>
+                <strong>${{ order.total_amount|floatformat:2 }}</strong>
+            </div>
+        </div>
+      
+        <!-- Thank you note -->
+        <div class="thank-you mt-4">
+            <p>We’ll send you shipping confirmation when your item(s) are on the way! We appreciate your business, and hope you enjoy your purchase.</p>
+            <p><strong>Thank you!</strong><br>toro</p>
+        </div>
+    </div>
+    
+</div>
+ 
+{% endblock %}

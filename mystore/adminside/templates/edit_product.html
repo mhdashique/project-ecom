@@ -1,0 +1,151 @@
+{% extends "admin_base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="col-12 grid-margin stretch-card mt-5 p-2 stretch-card" style="background-color: black;">
+    <div class="card mt-4 p-2">
+        <div class="card-body">
+            <div class="col-12 d-flex justify-content-between align-items-center">
+                <h3 class="card-title">Edit Product</h3>
+                <a href="{% url 'admin_product' %}" class="btn btn-dark">Back</a>
+            </div>
+           <!-- Display messages -->
+    {% comment %} {% if messages %}
+    <div aria-live="polite" aria-atomic="true" class="position-relative">
+       <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3">
+           {% for message in messages %}
+               <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true">
+                   <div class="toast-header">
+                       {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                           <strong class="me-auto text-success">Success</strong>
+                       {% elif message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                           <strong class="me-auto text-danger">Error</strong>
+                       {% elif message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}
+                           <strong class="me-auto text-warning">Warning</strong>
+                       {% else %}
+                           <strong class="me-auto">Info</strong>
+                       {% endif %}
+                       <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                   </div>
+                   <div class="toast-body">
+                       {{ message }}
+                   </div>
+               </div>
+           {% endfor %}
+       </div>
+   </div>
+   {% endif %} {% endcomment %}
+
+            <form class="forms-sample p-2" method="POST" action="" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group py-2">
+                    <label for="productName">Product Name</label>
+                    <input type="text" class="form-control " id="productName" name="name"  value="{{ product.name }}" >
+                </div>
+                <div class="form-group py-2">
+                    <label for="productDescription">Description</label>
+                    <textarea class="form-control " id="productDescription" name="description" rows="4"  >{{ product.description }}</textarea>
+                </div>
+                <div class="form-group py-2">
+                    <label for="category">Category</label>
+                    <select class="form-control " id="category" name="category" >
+                        {% for category in all_categories %}
+                      <option value="{{ category.name }}" {% if category == product.category %}selected{% endif %}>{{ category.name }}</option>
+                           
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="row py-2">
+                    <div class="col-sm-3 form-group">
+                        <label for="id_img1" class="col-form-label">Image1</label>
+                        <div>
+                            {% if product.img1.url %}
+                                <img src="{{ product.img1.url }}" id="image" alt="Img1" style="max-width: 200px;  margin-top: 10px;">
+                            {% endif %}
+                            <input type="file" name="img1" id="id_img1" class="form-control"  accept="image/*" >
+                        </div>
+                    </div>
+                    <div class="col-sm-3 form-group">
+                        <label for="id_img2" class="col-form-label">Image2</label>
+                        <div>
+                            {% if product.img2.url %}
+                                <img src="{{ product.img2.url }}" alt="Img2" style="max-width: 200px; margin-top: 10px;">
+                            {% endif %}
+                            <input type="file" name="img2" id="id_img2" class="form-control" accept="image/*" onchange="handleImageUpload(this.files)">
+                        </div>
+                    </div>
+                    <div class="col-sm-3 form-group">
+                        <label for="id_img3" class="col-form-label">Image3</label>
+                        <div>
+                            {% if product.img3.url %}
+                                <img src="{{ product.img3.url }}" alt="Img3" style="max-width: 200px; margin-top: 10px;">
+                            {% endif %}
+                            <input type="file" name="img3" id="id_img3" class="form-control"  accept="image/*" onchange="handleImageUpload(this.files)">
+                        </div>
+                    </div>
+                    <div class="col-sm-3 form-group">
+                        <label for="id_img4" class="col-form-label">Image4</label>
+                        <div>
+                            {% if product.img4.url %}
+                                <img src="{{ product.img4.url }}" alt="Img4" style="max-width: 200px; margin-top: 10px;">
+                            {% endif %}
+                            <input type="file" name="img4" id="id_img4" class="form-control"  accept="image/*" onchange="handleImageUpload(this.files)">
+                        </div>
+                    </div>
+                </div>
+                <div class="row py-2">
+                    <div class="col-6">
+                        <div class="form-group py-2">
+                            <label for="originalPrice ">Original Price</label>
+                            <input type="number" step="0.01" class="form-control " id="originalPrice" name="original_price"  value="{{ product.original_price }}" required>
+                        </div>
+                        <div class="form-group py-2">
+                            <label for="price ">Price</label>
+                            <input type="number" step="0.01" class="form-control text-white" id="price" name="price"  value="{{product.price }}" required>
+                        </div>
+                    </div>
+                   <div class="col-6">
+                    <div class="form-group py-2">
+                        <label for="priority">Priority</label>
+                        <input type="number" class="form-control text-white" id="priority" name="priority"  value="{{ product.priority }}" >
+                    </div>
+                    <!-- <div class="form-group py-2">
+                        <label for="isListed">Is Listed</label>
+                        <select class="form-control" id="isListed" name="is_listed" required>
+                            <option value="True" {% if product.is_listed.value == "True" %}selected{% endif %}>Yes</option>
+                            <option value="False" {% if product.is_listed.value == "False" %}selected{% endif %}>No</option>
+                        </select>
+                    </div> -->
+                   </div>
+                </div>
+                
+                
+                <button type="submit" class="btn btn-primary mr-2">Save Changes</button>
+                <button type="reset" class="btn btn-dark">Cancel</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    var $image = $('#image');
+
+$image.cropper({
+  aspectRatio: 16 / 9,
+  crop: function(event) {
+    console.log(event.detail.x);
+    console.log(event.detail.y);
+    console.log(event.detail.width);
+    console.log(event.detail.height);
+    console.log(event.detail.rotate);
+    console.log(event.detail.scaleX);
+    console.log(event.detail.scaleY);
+  }
+});
+
+// Get the Cropper.js instance after initialized
+var cropper = $image.data('cropper');
+</script>
+
+{% endblock content %}

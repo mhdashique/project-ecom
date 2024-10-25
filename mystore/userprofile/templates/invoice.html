@@ -1,0 +1,86 @@
+{% extends "user_base.html" %}
+{% block content %}
+{% load static %}
+
+<div class="container my-5">
+    <div class="breadcrumb-area section-padding-1 py-4">
+        <div class="invoice-header text-center py-5" style="height: 10rem;">
+            <h2>Invoice</h2>
+            {% if order %}
+            <p>Invoice for: {{ order.user.username }}</p>
+            {% endif %}
+            <p>Thank you for your purchase!</p>
+        </div>
+        
+        <div class="invoice-details border rounded p-4 my-4">
+            {% if order %}
+            <div class="row mb-2 px-4">
+                <div class="col-md-3">
+                    <strong>Invoice Date:</strong><br> {{ order.order_date|date:"d M, Y" }}
+                </div>
+                <div class="col-md-3">
+                    <strong>Invoice Number:</strong><br> INV-{{ order.id }}
+                </div>
+                <div class="col-md-3">
+                    <strong>Payment Method:</strong> <br>{{ order.payment_method }}
+                </div>
+                <div class="col-md-3">
+                    <strong>Billing Address:</strong> <br>{{ order.address }}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    
+        <div class="invoice-products border rounded p-4">
+            <h3 class="mb-2">Items</h3>
+            {% if product  %}
+            <div class="product-item d-flex align-items-center border-bottom py-3">
+                <div class="product-image me-4">
+                    <img src="{{ product.variant.product.img1.url }}" alt="{{ product.variant.product.name }}" style="width: 80px; height: 90px; border-radius: 5px;" />
+                </div>
+                <div class="product-details flex-grow-1">
+                    <h5 class="mb-1"><strong>{{ product.variant.product.name }}</strong></h5>
+                    Size: {{ product.variant.size }} &nbsp;&nbsp;&nbsp;&nbsp; 
+                    Qty: {{ product.quantity }} &nbsp;&nbsp;&nbsp;&nbsp;
+                    Unit Price: ${{ product.variant.product.price|floatformat:2 }} <br>
+                    <strong>Total Price:</strong> ${{ product.total_amount|floatformat:2 }}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="invoice-summary border rounded mt-4 p-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <span>Subtotal</span>
+                <span>${{ product.total_amount|floatformat:2 }}</span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+                <span>Shipping</span>
+                <span>${{ order.shipping_cost|floatformat:2 }}</span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+                <span>Taxes</span>
+                <span>${{ order.taxes|floatformat:2 }}</span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center text-success">
+                <span>Discount ({{ order.discount_code }})</span>
+                <span>- (${{ each_pro_discount|floatformat:2 }})</span>
+            </div>
+            <hr>
+            <div class="d-flex justify-content-between align-items-center">
+                <strong>Total</strong>
+                <strong>${{ invoice_total|floatformat:2 }}</strong>
+            </div>
+        </div>
+      
+        <!-- Payment terms and notes -->
+        <div class="invoice-notes mt-4">
+            <p><strong>Payment Terms:</strong> Due upon receipt</p>
+            <p><strong>Notes:</strong> This is an official invoice for your purchase. Please retain for your records.</p>
+            <p>If you have any questions about this invoice, please contact our customer support.</p>
+            <p><strong>Thank you for your business!</strong><br>toro</p>
+        </div>
+    </div>
+</div>
+ 
+{% endblock %}

@@ -1,0 +1,503 @@
+{% extends "user_base.html" %} {% block content %} {% load static %}
+
+<div
+  class="breadcrumb-area section-padding-1 bg-gray d-flex align-items-end py-4"
+  style="height: 15rem"
+>
+  <div class="container-fluid">
+    <div class="breadcrumb-content text-center">
+      <div class="breadcrumb-title">
+        <h2>Checkout</h2>
+      </div>
+      <ul>
+        <li><a href="{% url 'home' %}">Home</a></li>
+        <li><span> &gt; </span></li>
+        <li class="active">Checkout</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Checkout Start -->
+<div class="checkout-main-area pt-100 pb-100">
+  <div class="container">
+    <div class="customer-zone mb-30">
+      {% if applied_coupon %}
+      <div
+        class="applied-coupon alert alert-success d-flex justify-content-between align-items-center"
+      >
+        <div>
+          <strong>Applied Coupon:</strong> {{ applied_coupon.coupon }} - 
+          ${{applied_coupon.discount }} off
+        </div>
+        <form
+          action="{% url 'remove_coupon' %}"
+          method="POST"
+          style="display: inline"
+        >
+          {% csrf_token %}
+          <button type="submit" class="btn btn-sm btn-danger">
+            Remove Coupon
+          </button>
+        </form>
+      </div>
+      {% else %}
+      <p class="cart-page-title">
+        Have a coupon?
+        <a href="#" data-bs-toggle="modal" data-bs-target="#couponModal"
+          >Click here to select your coupon</a
+        >
+      </p>
+      {% endif %}
+
+      <!-- Coupon Modal -->
+      <div
+        class="modal fade"
+        id="couponModal"
+        tabindex="-1"
+        aria-labelledby="couponModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="couponModalLabel">
+                Available Coupons
+              </h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              {% if coupons %}
+              <ul class="list-group p-3">
+                {% for coupon in coupons %}
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  <div>
+                    <h4 class="text-primary">{{coupon.description}}</h4>
+                    <strong>{{ coupon.code }}</strong> - ${{ coupon.discount }}
+                    off
+                    <small class="d-block text-muted"
+                      >Min. purchase:
+                      <strong>${{ coupon.min_price }}</strong></small
+                    >
+                  </div>
+                  <button
+                    class="btn btn-sm btn-primary apply-coupon"
+                    data-coupon-code="{{ coupon.code }}"
+                  >
+                    Apply
+                  </button>
+                </li>
+                {% endfor %}
+              </ul>
+              {% else %}
+              <p>No available coupons at this time.</p>
+              {% endif %}
+            </div>
+            <div class="modal-footer p-3">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hidden form for coupon submission -->
+      <form
+        id="coupon-form"
+        action="{% url 'apply_coupon' %}"
+        method="POST"
+        style="display: none"
+      >
+        {% csrf_token %}
+        <input type="hidden" name="coupon_code" id="selected-coupon-code" />
+      </form>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const applyCouponButtons = document.querySelectorAll(".apply-coupon");
+        const couponForm = document.getElementById("coupon-form");
+        const selectedCouponCodeInput = document.getElementById(
+          "selected-coupon-code"
+        );
+
+        applyCouponButtons.forEach((button) => {
+          button.addEventListener("click", function () {
+            const couponCode = this.getAttribute("data-coupon-code");
+            selectedCouponCodeInput.value = couponCode;
+            couponForm.submit();
+          });
+        });
+      });
+    </script>
+    <div class="checkout-wrap">
+      <form method="POST" action="{% url 'place_order' %}" id="checkout-form">
+        {% csrf_token %}
+        <div class="row">
+          <div class="col-lg-7">
+            <div class="billing-info-wrap mr-100">
+              <h3>Billing Details</h3>
+              <div class="row">
+                <div class="address" id="address-edit">
+                  <div class="container d-flex justify-content-start p-3">
+                    <a
+                      href="{% url 'add_address' user.id %}?return_url=checkout"
+                      class="btn btn-sm btn-info btn-add-address"
+                    >
+                      <i class="fa fa-plus"></i> Add Address
+                    </a>
+                  </div>
+                  <div class="container">
+                    <div class="ads">
+                      {% if address.exists %}
+                      <div class="row">
+                        {% for ads in address %}
+                        <div class="col-lg-6 col-md-6">
+                          <div class="address-card" style="position: relative; border: 2px solid black; padding: 15px; margin-bottom: 20px;">
+                            <input type="radio" name="selected_address" id="address_id" value="{{ ads.id }}" {% if forloop.last %}checked{% endif %} required style="position: absolute; top: 5px; left: 90px; transform: scale(0.4);" />
+                            <label for="address_id">
+                              <address>
+                                <p><strong>{{ ads.name }}</strong></p>
+                                <p>{{ ads.street_address }} <br /> {{ ads.city }}, {{ ads.state }}, {{ ads.pincode}}<br /> {{ ads.country }}</p>
+                                <p>Mobile: {{ ads.phone }}</p>
+                              </address>
+                              <div class="d-flex justify-content-between">
+                                <a href="{% url 'edit_address' ads.id %}" class="check-btn sqr-btn text-primary" id="edit-address">
+                                  <i class="fa fa-edit"></i> Edit Address
+                                </a>
+                                <a hidden href="{% url 'delete_address' ads.id %}" class="check-btn sqr-btn text-danger" id="delete-address">
+                                  <i class="fa fa-trash"></i> Delete Address
+                                </a>
+                              </div>
+                            </label>
+                          </div>
+                        </div>
+                        {% endfor %}
+                      </div>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="additional-info-wrap pt-50">
+                <h3>Additional Information</h3>
+                <label for="order_notes">Order notes (optional)</label>
+                <textarea
+                  placeholder="Notes about your order, e.g. special notes for delivery."
+                  name="order_notes"
+                  id="order_notes"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-5">
+            <div class="your-order-area">
+              <h3>Your order</h3>
+              <div class="your-order-wrap gray-bg-4">
+                <div class="your-order-info-wrap">
+                  <div class="your-order-info">
+                    <ul>
+                      <li>Product <span>Total</span></li>
+                    </ul>
+                  </div>
+                  <div class="your-order-middle">
+                    <ul>
+                      {% for item in cart_items %}
+                      <li>
+                        {{ item.variant.product.name }} - {{item.variant.size}}
+                        X {{ item.quantity }}
+                        <span>${{ item.total_price|floatformat:2 }} </span>
+                      </li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                  <div class="your-order-info order-subtotal">
+                    <ul>
+                      <li>
+                        Subtotal
+                        <span>${{ order_subtotal|floatformat:2 }}</span>
+                      </li>
+                      <input
+                        type="hidden"
+                        name="order_subtotal"
+                        id="order_subtotal"
+                        value="{{ order_subtotal|floatformat:2 }}"
+                      />
+                    </ul>
+                  </div>
+                  {% if applied_coupon %}
+                  <div class="your-order-info order-coupon py-3">
+                    <ul>
+                      <li>
+                        Coupon ({{ applied_coupon.coupon }})
+                        <span
+                          >-${{ applied_coupon.discount|floatformat:2 }}</span
+                        >
+                      </li>
+                      <input
+                        type="hidden"
+                        name="order_coupon"
+                        id="order_coupon"
+                        value="{{ applied_coupon.coupon }}"
+                      />
+                    </ul>
+                  </div>
+                  {% endif %}
+
+                  <div class="your-order-info order-total">
+                    <ul>
+                      <li>
+                        Total <span>${{ order_total|floatformat:2 }}</span>
+                      </li>
+                      <input
+                        type="hidden"
+                        name="order_total"
+                        id="order_total"
+                        value="{{ order_total|floatformat:2 }}"
+                      />
+                    </ul>
+                  </div>
+                </div>
+
+                <div class="payment-method">
+                  <h5><strong>Select Payment Method</strong></h5>
+                  <div class="form-check mt-20 ps-5">
+                    <input
+                      class="form-check-input"
+                      type="radio"
+                      name="payment_method"
+                      id="cod"
+                      value="cod"
+                      checked
+                      required
+                    />
+                    <label class="form-check-label" for="cod"
+                      >Cash on Delivery</label
+                    >
+                    <p class="small text-muted">Pay with cash upon delivery.</p>
+                  </div>
+
+                  <div class="form-check mt-20 ps-5">
+                    <input
+                      class="form-check-input"
+                      type="radio"
+                      name="payment_method"
+                      id="razorpay"
+                      value="razorpay"
+                      required
+                    />
+                    <label class="form-check-label" for="razorpay"
+                      >Razorpay</label
+                    >
+                    <p class="small text-muted">Pay securely using Razorpay.</p>
+                  </div>
+                    <!-- New Wallet Payment Option -->
+                  <div class="form-check mt-20 ps-5">
+                    <input
+                      class="form-check-input"
+                      type="radio"
+                      name="payment_method"
+                      id="wallet"
+                      value="wallet"
+                      required
+                    />
+                    <label class="form-check-label" for="wallet">Wallet</label>
+                    <p class="small text-muted">Use available wallet balance for payment.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="place-order mt-30">
+                <button
+                  type="button"
+                  class="btn btn-dark btn-lg w-100"
+                  id="place-order-btn"
+                >
+                  Place Order
+                </button>
+              </div>
+
+              <form
+                id="razorpay-form"
+                action="{% url 'razorpay_callback' %}"
+                method="POST"
+                style="display: none"
+              >
+                {% csrf_token %}
+
+                <input
+                  type="hidden"
+                  name="razorpay_payment_id"
+                  id="razorpay_payment_id"
+                />
+                <input
+                  type="hidden"
+                  name="razorpay_order_id"
+                  id="razorpay_order_id"
+                />
+                <input
+                  type="hidden"
+                  name="razorpay_signature"
+                  id="razorpay_signature"
+                />
+              </form>
+
+              <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+              <script>
+                document.getElementById('place-order-btn').onclick = function(e) {
+                  e.preventDefault();
+                  var paymentMethod = document.querySelector('input[name="payment_method"]:checked').value;
+              
+                  if (paymentMethod === 'razorpay') {
+                    var ad_id = document.getElementById('address_id').value;
+                    var order_total = document.getElementById('order_total').value;
+                    var order_subtotal = document.getElementById('order_subtotal').value;
+                    var order_coupon = {% if applied_coupon %}document.getElementById('order_coupon').value{% else %}null{% endif %};
+                
+                    var options = {
+                        "key": "{{ razorpay_merchant_key }}",
+                        "amount": "{{ razorpay_amount }}",
+                        "currency": "{{ currency }}",
+                        "name": "Your Company Name",
+                        "description": "Order Payment",
+                        "order_id": "{{ razorpay_order_id }}",
+                        "handler": function(response) {
+                            handlePayment(response, {
+                                address_id: ad_id,
+                                order_total: order_total,
+                                order_subtotal: order_subtotal,
+                                order_coupon: order_coupon ? order_coupon : "",
+                                payment_method: paymentMethod,
+                                payment_status: 'SUCCESS'
+                            });
+                        },
+                        "modal": {
+                            "ondismiss": function() {
+                                console.log('Modal dismissed without payment.');
+                                handlePayment(paymentResponse=null, {
+                                  address_id: ad_id,
+                                  order_total: order_total,
+                                  order_subtotal: order_subtotal,
+                                  order_coupon: order_coupon ? order_coupon : "",
+                                  payment_method: paymentMethod,
+                                  payment_status: 'failed'
+                              });
+                                // Do nothing on modal dismiss
+                            }
+                        },
+                        "prefill": {
+                            "name": "{{ user.name }}",
+                            "email": "{{ user.email }}",
+                            "contact": "{{ user.phone }}"
+                        },
+                        "theme": {
+                            "color": "#F37254"
+                        }
+                    };
+                
+                    var rzp = new Razorpay(options);
+                    rzp.open();
+                
+                    function handlePayment(paymentResponse, orderData) {
+                        console.log('Handling payment response.');
+                
+                        // Check if payment was successful
+                        if (paymentResponse && paymentResponse.razorpay_payment_id) {
+                            // Payment was successful
+                            orderData.razorpay_payment_id = paymentResponse.razorpay_payment_id;
+                            orderData.razorpay_order_id = paymentResponse.razorpay_order_id;
+                            orderData.razorpay_signature = paymentResponse.razorpay_signature;
+                
+                            // Send successful payment data to server
+                            sendOrderData(orderData);
+                        } else {
+                            // Payment failed
+                            console.log("Payment failed or cancelled.");
+                            // Place the order with status PENDING
+                            
+                            sendOrderData(orderData);
+                        }
+                    }
+                
+                    function sendOrderData(orderData) {
+                        // Send the data via AJAX to Django
+                        $.ajax({
+                            method: 'POST',
+                            url: '/razorpay_callback/',
+                            headers: {
+                                'X-CSRFToken': '{{ csrf_token }}',
+                            },
+                            data: orderData,
+                            success: function(response) {
+                                console.log("Order processed!");
+                                window.location.href = response.redirect_url;
+                            },
+                            error: function(error) {
+                                console.log("Order FAILED!");
+                                console.error("Error processing order:", error);
+                                // You might want to show an error message to the user here
+                            }
+                        });
+                    }
+                
+              
+              
+                      } else if (paymentMethod === 'wallet') {
+                        // Handle Wallet payment
+                        var ad_id = document.getElementById('address_id').value;
+                        var order_total = document.getElementById('order_total').value;
+                        var order_subtotal = document.getElementById('order_subtotal').value;
+                        var order_coupon = {% if applied_coupon %}document.getElementById('order_coupon').value{% else %}null{% endif %};
+                
+                        e.preventDefault();
+                
+                        $.ajax({
+                            method: 'POST',
+                            url: '/wallet_payment/',  // Create a new view for wallet payment processing
+                            headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+                            data: {
+                                address_id: ad_id,
+                                order_total: order_total,
+                                order_subtotal: order_subtotal,
+                                order_coupon: order_coupon ? order_coupon : "",
+                                payment_method: paymentMethod
+                            },
+                            success: function(response) {
+                                // Handle successful payment
+                                window.location.href = response.redirect_url;
+                            },
+                            error: function(error) {
+                                // Handle payment error
+                                console.error("Wallet payment failed:", error);
+                            }
+                        });
+                    } else if (paymentMethod === 'cod') {
+                        // Handle Cash on Delivery (COD)
+                        document.getElementById('checkout-form').submit();
+                    }
+                };
+              
+              </script>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

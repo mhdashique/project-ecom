@@ -1,0 +1,64 @@
+{% extends "user_base.html" %}
+{% block content %}
+{% load static %}
+
+<div class="wishlist-container container my-5 py-5">
+    <h3 class="text-center mt-5 pt-5" style="">Your Wishlist</h3>
+    <div class="wishlist-items row justify-content-center my-5 pt-5">
+        {% if wishlist_items %}
+            {% for item in wishlist_items %}
+                <div class="wishlist-item card col-md-4 mb-4">
+                    <img src="{{ item.product.img1.url }}" class="card-img-top wishlist-image" alt="{{ item.product.name }}">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">{{ item.product.name }}</h5>
+                        <p class="card-text">Price: ₹{{ item.product.price }}</p>
+                        <p class="card-text">Size: {{ item.variant_size }}</p>  <!-- Display the size -->
+                        <div class="wishlist-actions">
+                            <form method="POST" action="{% url 'remove_from_wishlist' item.product.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                            </form>
+                            <form method="POST" action="{% url 'add_cart' item.product.id %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="size" value="{{ item.variant_size }}">  <!-- Hidden input for size -->
+                                <button type="submit" class="btn btn-primary btn-sm">Add to Cart</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="text-center">
+                <h4>Your wishlist is empty!</h4>
+                <a href="{% url 'shop' %}" class="btn btn-primary mt-3">Continue Shopping</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .wishlist-container {
+        padding: 20px;
+    }
+
+    .wishlist-item {
+        max-width: 300px;
+    }
+
+    .wishlist-image {
+        max-height: 200px;
+        object-fit: contain;
+    }
+
+    .wishlist-actions {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 10px;
+    }
+
+    .wishlist-actions form {
+        display: inline-block;
+    }
+</style>
+
+{% endblock %}

@@ -1,0 +1,120 @@
+{% extends "admin_base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5 py-5">
+    <h2>Order Details</h2>
+    <div class="card my-4" style="border: 2px solid #007bff;">
+        <div class="card-body">
+            <h5 class="card-title">Order #{{ order.id }}</h5>
+            
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <p><strong>Customer:</strong> {{ order.user.username }}</p>
+                </div>
+                <div class="col-md-4">
+                    <p><strong>Order Date:</strong> {{ order.order_date|date:"F d, Y" }}</p>
+                </div>
+                <div class="col-md-4">
+                    <p><strong>Total Amount:</strong> ${{ order.total_amount|floatformat:2 }}</p>
+                </div>
+            </div>
+    
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <p><strong>Shipping Address:</strong> {{ order.address }}</p>
+                </div>
+                <div class="col-md-4">
+                    <p><strong>Payment Method:</strong> {{ order.payment_method }}</p>
+                </div>
+                <div class="col-md-4">
+                    <strong>Payment status:</strong> <br>
+                    {% if order.payment_status == 'Failed' %}
+                        <strong class="text-danger">{{ order.payment_status }}</strong>
+                    {% elif order.payment_status == 'Paid' %}
+                        <strong class="text-success">{{ order.payment_status }}</strong>
+                    {% else %} 
+                        <strong class="text-primary">{{ order.payment_status }}</strong>   
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+
+    <h3>Ordered Products</h3>
+    <div class="table-responsive p-3 my-4"style="border: 2px solid #007bff;">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Size</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                    <th>Return request</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in ord_products %}
+                <tr>
+                    <td>
+                        <img src="{{ product.variant.product.img1.url }}" alt="{{ product.variant.product.name }}" style="width: 50px; height: 50px; object-fit: cover;">
+                        &nbsp;&nbsp;&nbsp;{{ product.variant.product.name }}
+                    </td>
+                    <td>{{ product.size }}</td>
+                    <td>{{ product.quantity }}</td>
+                    <td>${{ product.variant.product.price|floatformat:2 }}</td>
+                    <td>${{ product.total_amount|floatformat:2 }}</td>
+                    <td>{% if product.return_request %}
+                        <span style="color: green;">Yes</span>
+                        {% else %}
+                        <span style="color: rgb(185, 0, 0);">No</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                    {% if order.payment_status == 'Failed' %}
+                        <span class="text-danger">payment failed</span>
+                    {% elif product.status == 'Cancelled' %}
+                        <span class="text-danger">Cancelled</span>
+                    {% elif product.status == 'Returned' %}
+                        <span class="text-danger">Returned</span>
+                 
+                    {% else %}
+                        <form action="{% url 'update_product_status' %}" method="POST" class="product-status-form">
+                            {% csrf_token %}
+                            <input type="hidden" name="product_id" value="{{ product.id }}">
+                            <select class="form-select product-status" name="status" onchange="this.form.submit()">
+                                {% for status, label in product.STATUS_CHOICES %}
+                                <option value="{{ status }}" 
+                                        {% if product.status == status %}selected{% endif %} 
+                                        {% if status == 'Order confirmed' and product.status != 'Order confirmed' %}disabled{% endif %}
+                                        {% if status == 'Shipped' and product.status != 'Order confirmed' %}disabled{% endif %}
+                                        {% if status == 'Delivered' %}
+                                            {% if product.status not in 'Order confirmed,Shipped' %}disabled{% endif %}
+                                        {% endif %}
+                                        {% if status == 'Cancelled' %}
+                                            {% if product.status in 'Delivered,Returned' %}disabled{% endif %}
+                                        {% endif %}
+                                        {% if status == 'Returned' %}
+                                            {% if product.status == 'Delivered' %}abled{% endif %}
+                                        {% endif %}>
+                                    {{ label }}
+                                </option>
+                                {% endfor %}
+                            </select>                           
+                                                                                                               
+                        </form>
+                    {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+{% endblock content %}

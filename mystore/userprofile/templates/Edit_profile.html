@@ -1,0 +1,72 @@
+{% extends "user_base.html" %}
+{% block content %}
+{% load static %}
+
+<div class="breadcrumb-area section-padding-1 bg-gray d-flex align-items-end py-4 " style="height: 15rem;">
+    <div class="container-fluid">
+        <div class="breadcrumb-content text-center">
+            <div class="breadcrumb-title">
+                <h2>Edit Profile</h2>
+            </div>
+            <ul>
+                <li>
+                    <a href="{% url 'home' %}">Home</a>
+                </li>
+                <li><span> &gt; </span></li>
+                <li class="active">Edit Profile</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="myaccount-content">
+        <div class="account-details-form">
+            <form method="POST" action="">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="single-input-item">
+                            <label for="full-name" class="required">Full Name <span>*</span></label>
+                            <input type="text" id="full-name" name="full_name" value="{{ user.username }}" />
+                        </div>
+                    </div>
+                    <div class="single-input-item col-lg-6">
+                        <label for="gender">Gender</label>
+                        <select class="form-control" id="gender" name="gender">
+                            {% for value, display in gender_choices %}
+                            <option value="{{ value  }}">{{ display  }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% comment %} <div class="col-lg-6">
+                        <div class="single-input-item">
+                            <label for="email" class="required">Email <span>*</span></label>
+                            <input type="email" id="email" name="email" value="{{ user.email }}" />
+                        </div>
+                    </div> {% endcomment %}
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="single-input-item">
+                            <label for="phone-number" class="required">Phone Number <span>*</span></label>
+                            <input type="text" id="phone-number" name="phone" value="{{ user.phone }}" />
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="single-input-item">
+                            <label for="dob">Date of Birth</label>
+                            <input type="date" id="dob" name="dob" value="{{ user.dob|date:'Y-m-d' }}" />
+                        </div>
+                    </div>
+                </div>
+               
+                <div class="single-input-item">
+                    <button type="submit" class="check-btn sqr-btn btn btn-primary mt-3">Update Profile</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

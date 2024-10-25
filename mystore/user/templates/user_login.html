@@ -1,0 +1,128 @@
+{% load static %}
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Toro - Minimal eCommerce HTML Template</title>
+    <meta name="robots" content="noindex, follow" />
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'user/images/favicon.png' %}">
+
+    <!-- All CSS is here ============================================ -->
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{% static 'user/css/vendor/bootstrap.min.css' %}">
+    <!-- Icon Font CSS -->
+    <link rel="stylesheet" href="{% static 'user/css/vendor/font-awesome.css' %}">
+    <link rel="stylesheet" href="{% static 'user/css/vendor/dlicon.css' %}">
+    <!-- Others CSS -->
+    <link rel="stylesheet" href="{% static 'user/css/plugins/owl-carousel.css' %}">
+    <link rel="stylesheet" href="{% static 'user/css/plugins/slick.css' %}">
+    <link rel="stylesheet" href="{% static 'user/css/plugins/magnific-popup.css' %}">
+    <link rel="stylesheet" href="{% static 'user/css/plugins/jarallax.css' %}">
+    <link rel="stylesheet" href="{% static 'user/css/plugins/easyzoom.css' %}">
+    <link rel="stylesheet" href="{% static 'user/css/plugins/animate.css' %}">
+    <link rel="stylesheet" href="{% static 'user/css/plugins/fullpage.css' %}">
+    <link rel="stylesheet" href="{% static 'user/css/plugins/jquery-ui.css' %}">
+    <link rel="stylesheet" href="{% static 'user/css/plugins/select2.min.css' %}">
+    <link rel="stylesheet" href="{% static 'user/css/style.css' %}">
+     <!-- alertify JS CSS and theme -->
+     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
+     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css"/>
+ 
+</head>
+<body>
+    <div class="login-register-area mt-3 pt-95 pb-100">
+        <div class="container ">
+            <div class="row d-flex justify-content-center align-items-center">
+                <div class="col-lg-6 col-md-6">
+                    <div class="login-register-wrap mr-70">
+                        <h3><i class="fa fa-user-o"></i> Login</h3>
+                        <div class="login-register-form">
+                            <form action="" method="POST">
+                                {% csrf_token %}
+                                <div class="sin-login-register">
+                                    <label for="user-name">Username or email address <span>*</span></label>
+                                    <input type="text" name="username" id="user-name" >
+                                    {% if errors.general %}
+                                    <div class="error" style="list-style: none; color:rgb(244, 133, 133)">{{ errors.general }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="sin-login-register">
+                                    <label for="password">Password <span>*</span></label>
+                                    <input type="password" name="password" id="password" >
+                                    {% if errors.password %}
+                                    <div class="error" style="list-style: none; color:rgb(244, 133, 133)">{{ errors.password }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="login-register-btn-remember">
+                                    <div class="login-register-btn">
+                                        <button type="submit">Log in</button>
+                                    </div>
+                                    <div class="login-register-remember">
+                                        <input type="checkbox" id="remember-me">
+                                        <label for="remember-me">Remember me</label>
+                                    </div>
+                                </div>
+                                <a href="{% url 'verify_email' %}">Lost your password?</a>
+                                <div class="login-form-footer mt-1">
+                                    <p class="mb-0">Don't have an account? <a href="{% url 'signup' %}">Sign Up</a></p>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+   
+  
+    <!-- All JS is here ============================================ -->
+
+    <!-- Modernizer JS -->
+    <script src="{% static 'user/js/vendor/modernizr-3.11.7.min.js' %}"></script>
+    <!-- jquery -->
+    <script src="{% static 'user/js/vendor/jquery-v3.6.0.min.js' %}"></script>
+    <!-- Popper JS -->
+    <script src="{% static 'user/js/vendor/popper.js' %}"></script>
+    <!-- Bootstrap JS -->
+    <script src="{% static 'user/js/vendor/bootstrap.min.js' %}"></script>
+    <script src="{% static 'user/js/plugins/owl-carousel.js' %}"></script>
+    <script src="{% static 'user/js/plugins/slick.js' %}"></script>
+    <script src="{% static 'user/js/plugins/jarallax.min.js' %}"></script>
+    <script src="{% static 'user/js/plugins/countdown.js' %}"></script>
+    <script src="{% static 'user/js/plugins/magnific-popup.js' %}"></script>
+    <script src="{% static 'user/js/plugins/instafeed.js' %}"></script>
+    <script src="{% static 'user/js/plugins/tilt.js' %}"></script>
+    <script src="{% static 'user/js/plugins/images-loaded.js' %}"></script>
+    <script src="{% static 'user/js/plugins/isotope.js' %}"></script>
+    <script src="{% static 'user/js/plugins/scrolloverflow-fullpage.js' %}"></script>
+    <script src="{% static 'user/js/plugins/fullpage.js' %}"></script>
+    <script src="{% static 'user/js/plugins/jquery-ui.js' %}"></script>
+    <script src="{% static 'user/js/plugins/jquery-ui-touch-punch.js' %}"></script>
+    <script src="{% static 'user/js/plugins/easyzoom.js' %}"></script>
+    <script src="{% static 'user/js/plugins/resizesensor.js' %}"></script>
+    <script src="{% static 'user/js/plugins/sticky-sidebar.js' %}"></script>
+    <script src="{% static 'user/js/plugins/scrollup.js' %}"></script>
+    <script src="{% static 'user/js/plugins/select2.min.js' %}"></script>
+    <script src="{% static 'user/js/plugins/cookie.js' %}"></script>
+    <script src="{% static 'user/js/plugins/bpopup.js' %}"></script>
+    <script src="{% static 'user/js/plugins/wow.js' %}"></script>
+    <script src="{% static 'user/js/plugins/ajax-mail.js' %}"></script>
+    <!-- Main JS -->
+    <script src="{% static 'user/js/main.js' %}"></script>
+    <!-- alert -->
+    <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+    <script>
+        {% for message in messages %}
+            alertify.set('notifier','position', 'top-center');
+            alertify.success('{{message}}');
+        {% endfor %}
+        
+</script>
+</body>
+</html>

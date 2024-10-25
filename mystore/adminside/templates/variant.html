@@ -1,0 +1,106 @@
+{% extends "admin_base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5 py-5">
+    <div class="row align-items-center px-4">
+        <div class="col-md-6">
+            <h2>Product Variants</h2>
+        </div>
+       
+        <div class="col-md-6 text-end">
+            <form class="d-flex justify-content-end" method="GET" action="">
+                <input class="form-control me-2 col-sm-6" type="search" placeholder="Search..." aria-label="Search" name="search">
+                <button class="btn btn-outline-primary" type="submit">Search</button>
+            </form>
+        </div>
+        <div class="col-md-6 d-flex justify-content-start text-end " >
+            <div class="">
+                <a href="{% url 'admin_product' %}" class="btn btn-dark mt-2">Back</a>
+            </div>
+        </div>
+        <div class="col-md-6 d-flex justify-content-end text-end " >
+            <div class="">
+                <a href="{% url 'add_variant' product_id %}" class="btn btn-dark mt-2">Add Variants</a>
+            </div>
+        </div>
+    </div>
+  
+
+    <div class="col-lg-12 grid-margin mt-3 py-3 stretch-card" style="background-color: black;">
+        <div class="card ">
+            <div class="card-body">
+            
+                <div class="table-responsive ">
+                    <table class="table table-striped text-white">
+                        <thead>
+                            <tr>
+                                <th>no</th>
+                                <th>Name</th>
+                                <th>Image</th>
+                                <!-- <th>Description</th> -->
+                              
+                             
+                                <th>size</th>
+                                <th>Qty</th>
+                                <th>Edit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for variant in variants %}
+                            <tr>
+                                <td>{{forloop.counter}}</td>
+                                <td>{{ variant.product.name}}</td>
+                                <td class="py-1">
+                                    {% if variant.product.img1 %}
+                                    <img src="{{ variant.product.img1.url }}" alt="{{ variant.product.name }}" />
+                                    {% endif %}
+                                </td>
+                                <td>{{ variant.size }}</td>
+                                <td>{% if variant.quantity > 0 %}
+                                    {{ variant.quantity }}
+                                    {% else %}
+                                    <span class="text-danger">Out of Stock</span>
+                                    {% endif %}</td>
+                                <td>
+                                    <a class="btn btn-inverse-info btn-sm" href="{% url 'edit_variant' variant.id %}">Edit</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <!-- {% if products.paginator.num_pages > 1 %}
+                <div class="pagination justify-content-center">
+                    <ul class="pagination">
+                        {% if products.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?page=1">&laquo; First</a></li>
+                        <li class="page-item"><a class="page-link" href="?page={{ products.previous_page_number }}">Previous</a></li>
+                        {% else %}
+                        <li class="page-item disabled"><span class="page-link">&laquo; First</span></li>
+                        <li class="page-item disabled"><span class="page-link">Previous</span></li>
+                        {% endif %}
+
+                        <li class="page-item"><span class="page-link">Page {{ products.number }} of {{ products.paginator.num_pages }}</span></li>
+
+                        {% if products.has_next %}
+                        <li class="page-item"><a class="page-link" href="?page={{ products.next_page_number }}">Next</a></li>
+                        <li class="page-item"><a class="page-link" href="?page={{ products.paginator.num_pages }}">Last &raquo;</a></li>
+                        {% else %}
+                        <li class="page-item disabled"><span class="page-link">Next</span></li>
+                        <li class="page-item disabled"><span class="page-link">Last &raquo;</span></li>
+                        {% endif %}
+                    </ul>
+                </div>
+                {% endif %} -->
+                <!-- End Pagination -->
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}
