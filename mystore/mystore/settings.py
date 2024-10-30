@@ -33,7 +33,7 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool('DEBUG', default=False) 
 
-ALLOWED_HOSTS = ['13.127.207.111','127.0.0.1', '0.0.0.0', '13.127.207.111']
+ALLOWED_HOSTS = ['13.127.207.111', '0.0.0.0', '13.127.207.111']
 
 
 CSRF_TRUSTED_ORIGINS = [
