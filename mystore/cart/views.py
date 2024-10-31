@@ -21,8 +21,7 @@ import razorpay
 
 @login_required
 def wishlist(request):
-    wishlist_items = Wishlist.objects.filter(user=request.user)
-    print(list.variant_size for list in wishlist_items)
+    wishlist_items = Wishlist.objects.filter(user=request.user)  
     return render(request, 'wishlist.html', {'wishlist_items': wishlist_items})
 
 @login_required
@@ -30,7 +29,6 @@ def add_to_wishlist(request, product_id):
     product = get_object_or_404(Products, id=product_id)
 
     size = request.GET.get('size')
-    print(size)
     available_variant = Variant.objects.filter(product=product, size=size, quantity__gt=0).first()
     
     if not available_variant:

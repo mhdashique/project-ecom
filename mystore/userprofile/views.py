@@ -232,12 +232,9 @@ def change_pasword(request):
             current_password =request.POST.get("current_password")
             new_password =request.POST.get("new_password")
             confirm_password =request.POST.get("confirm_password")
-            print (current_password)
             
             try:
                 user = CustomUser.objects.get(email=email)
-                print(user)
-                print(user.password)
             except:
                 messages.error(request, "User is not found")
                 return redirect("login")

@@ -128,14 +128,12 @@ def signup(request):
         user.save()
 
         generate_otp(user)
-
         return redirect("verify_otp",user.id)
         
     return render(request, 'user_register.html')
 
 def generate_otp(user):
     otp = random.randint(100000, 999999)  # Generate a 6-digit OTP
-    print(f"Generated OTP: {otp}")  # For debugging
     user.otp_field = otp
     user.otp_generated_at = timezone.now()
     user.save()
@@ -265,11 +263,8 @@ def new_resend_otp(request, user_id):
 
 def set_new_password(request, user_id):
     errors = {}
-    print("hydd")
     user = get_object_or_404(CustomUser, id=user_id)  # Retrieve user by ID or other means
-    print("hydffd")
     if request.method == "POST":
-        print("hydffdhj")
         new_password = request.POST.get("new_password")
         confirm_password = request.POST.get("confirm_password")
         

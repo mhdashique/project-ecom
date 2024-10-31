@@ -126,7 +126,6 @@ def place_order(request):
             return redirect('order_confirm')
 
         # except Exception as e:
-        #     print(e)
         #     messages.error(request, 'An error occurred while placing your order.')
         #     return redirect('checkout')
         
@@ -137,7 +136,6 @@ def place_order(request):
 @csrf_exempt
 def razorpay_callback(request):
     if request.method == "POST":
-        print("hyhfgh")
         try:
             address_id = request.POST.get('address_id')
             total_amount =float(request.POST.get('order_total'))
@@ -239,7 +237,6 @@ def razorpay_callback(request):
                         'redirect_url': '/order_confirm/'
                     })
                 except Exception as e:
-                    print(f"Payment verification failed: {e}")
                     return JsonResponse({
                         'status': 'failure',
                         'message': 'Payment verification failed',
@@ -247,7 +244,6 @@ def razorpay_callback(request):
                     })
             else:
                 # Payment was not attempted or failed
-                print("oooofailed")
                 return JsonResponse({
                     'status': 'success',
                     'message': 'Order placed successfully. Payment pending.',
@@ -255,7 +251,6 @@ def razorpay_callback(request):
                 })
 
         except Exception as e:
-            print(f"Order processing error: {e}")
             return JsonResponse({
                 'status': 'error',
                 'message': 'Error processing order',
