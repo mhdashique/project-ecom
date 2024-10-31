@@ -30,7 +30,7 @@ class Products(models.Model):
     img2 = models.ImageField(upload_to='media/', validators=[FileExtensionValidator(['jpg', 'jpeg', 'png'])],null=True, blank=True)
     img3 = models.ImageField(upload_to='media/', validators=[FileExtensionValidator(['jpg', 'jpeg', 'png'])],null=True, blank=True)
     img4 = models.ImageField(upload_to='media/', validators=[FileExtensionValidator(['jpg', 'jpeg', 'png'])],null=True, blank=True)
-    
+    is_listed = models.BooleanField(default=True)
 
     def get_images(self):
         return [self.img1, self.img2, self.img3, self.img4]

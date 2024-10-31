@@ -61,7 +61,7 @@
                                 </td>
                                 <td>
                                     {% if product.is_listed %}
-                                    <a class="btn btn-inverse-info btn-sm" href="">Unlist</a>
+                                    <a class="btn btn-inverse-info btn-sm" href="{% url 'product_list' product.id %}">Unlist</a>
                                     {% else %}
                                     <a class="btn btn-inverse-info btn-sm" href="">List</a>
                                     {% endif %}

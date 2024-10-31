@@ -250,7 +250,11 @@ def products_manage(request):
 
     return render(request, 'admin_products.html', context)
    
-
+def product_list(request,id): 
+    product = Products.objects.get(id=id)
+    product.is_listed = not product.is_listed
+    product.save    
+    return redirect("admin_product")
 
 @login_required(login_url="adminlogin")
 @csrf_exempt
