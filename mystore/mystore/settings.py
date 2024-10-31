@@ -187,8 +187,8 @@ EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS', default=True)
 EMAIL_USE_SSL = env.bool('EMAIL_USE_SSL', default=False)
 
 
-FILE_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024  # 5 MB
-DATA_UPLOAD_MAX_MEMORY_SIZE = 15 * 1024 * 1024  # 5 MB (if needed)
+FILE_UPLOAD_MAX_MEMORY_SIZE = 100 * 1024 * 1024  # 5 MB
+DATA_UPLOAD_MAX_MEMORY_SIZE = 100 * 1024 * 1024  # 5 MB (if needed)
 
 
 # Razorpay API keys
