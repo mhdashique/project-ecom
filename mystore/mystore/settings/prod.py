@@ -9,6 +9,8 @@ DEBUG = False
 
 STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
 
 DATABASES = {
     'default': dj_database_url.parse(
@@ -19,18 +21,19 @@ DATABASES = {
 }
 
 ALLOWED_HOSTS = [
-    "your-app-name.onrender.com",   # Render domain
-    "127.0.0.1",                    # Local dev
-    "localhost",                    # Local dev
+    "toro-mr5z.onrender.com",
+    "127.0.0.1",
+    "localhost",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://your-app-name.onrender.com",
+    "https://toro-mr5z.onrender.com",
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "https://your-app-name.onrender.com",
+    "https://toro-mr5z.onrender.com",
 ]
+
 
 # ALLOWED_HOSTS = [
 #     "13.127.207.111",
