@@ -5,7 +5,7 @@ from .models import CustomUser
 from django.core.exceptions import ValidationError
 from django.core.validators import EmailValidator
 from django.core.mail import send_mail
-from mystore.settings import EMAIL_HOST_USER
+# from mystore.settings import EMAIL_HOST_USER
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import get_user_model
 from django.utils import timezone
@@ -18,6 +18,10 @@ from django.urls import reverse
 from django.views.decorators.cache import never_cache
 from django.contrib.auth.decorators import login_required
 from adminside.models import Variant,Products,Category
+from django.conf import settings
+
+email_user = settings.EMAIL_HOST_USER
+
 
 
 # user login

@@ -454,7 +454,8 @@ def cancel_order(request):
                 each_pro_discount = order.discount/ord_pro_count 
                 order_product.variant.quantity += order_product.quantity
                 order_product.variant.save()
-                if order_product.payment_status == "Paid":
+                
+                if order_product.order.payment_status == "Paid":
                     wallet = Wallet.objects.get(user=request.user)
                     return_amount = order_product.total_amount- Decimal(each_pro_discount)
                     wallet.balance += return_amount
