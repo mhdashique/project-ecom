@@ -3,10 +3,12 @@ Brotli==1.1.0
 certifi==2024.8.30
 cffi==1.17.1
 charset-normalizer==3.3.2
+cloudinary==1.44.1
 cssselect2==0.7.0
 dj-database-url==3.0.1
 Django==5.0.7
 django-appconf==1.0.6
+django-cloudinary-storage==0.3.0
 django-environ==0.11.2
 django-imagekit==5.0.0
 easy-thumbnails==2.9
