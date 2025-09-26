@@ -1,1 +1,41 @@
+# Python-related
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.sqlite3
+
+# Environment variables
 .env
+
+# Django-related
+db.sqlite3
+migrations/**/__pycache__/
+migrations/*.pyc
+
+# Static and Media files
+# static/
+media/
+
+# VS Code-related
+.vscode/
+*.code-workspace
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Logs and temporary files
+*.log
+*.pot
+*.py[co]
+*.swp
+*.swo
+*.bak
+*.tmp
+*.~*
+
+# Virtual environments
+venv/
+.env/
+env/
