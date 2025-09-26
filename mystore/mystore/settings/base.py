@@ -21,6 +21,9 @@ INSTALLED_APPS = [
     "cart",
     "userprofile",
     "orders",
+
+    "cloudinary",
+    "cloudinary_storage",
 ]
 
 MIDDLEWARE = [

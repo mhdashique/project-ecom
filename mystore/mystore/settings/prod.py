@@ -20,6 +20,13 @@ DATABASES = {
     )
 }
 
+
+DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
+
+CLOUDINARY_STORAGE = {
+    'CLOUDINARY_URL' : env('CLOUDINARY_URL')
+}
+
 ALLOWED_HOSTS = [
     "toro-mr5z.onrender.com",
     "127.0.0.1",
