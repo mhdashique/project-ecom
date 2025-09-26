@@ -12,6 +12,9 @@ __pycache__/
 db.sqlite3
 migrations/**/__pycache__/
 migrations/*.pyc
+# Ignore Django migrations
+*/migrations/
+!*/migrations/__init__.py
 
 # Static and Media files
 static/
@@ -39,4 +42,4 @@ Thumbs.db
 venv/
 .env/
 env/
-/new/
+new/
