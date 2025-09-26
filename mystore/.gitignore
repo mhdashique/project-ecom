@@ -14,7 +14,7 @@ migrations/**/__pycache__/
 migrations/*.pyc
 
 # Static and Media files
-# static/
+static/
 media/
 
 # VS Code-related
