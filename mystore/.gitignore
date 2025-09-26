@@ -42,4 +42,4 @@ Thumbs.db
 venv/
 .env/
 env/
-new/
+/new/
