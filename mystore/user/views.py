@@ -26,7 +26,7 @@ email_user = settings.EMAIL_HOST_USER
 
 # user login
 def userlogin(request):
-    if "email" in request.session:
+    if request.user.is_authenticated:
         return redirect("home")
 
     errors = {}
@@ -78,7 +78,7 @@ def userlogin(request):
 # user signup
 def signup(request):
 
-    if "email" in request.session:
+    if request.user.is_authenticated:
         return redirect("home")
 
     if request.method == "POST":
@@ -267,7 +267,7 @@ def new_resend_otp(request, user_id):
 
 def set_new_password(request, user_id):
     errors = {}
-    user = get_object_or_404(CustomUser, id=user_id)  # Retrieve user by ID or other means
+    user = get_object_or_404(CustomUser, id=user_id)  
     if request.method == "POST":
         new_password = request.POST.get("new_password")
         confirm_password = request.POST.get("confirm_password")
